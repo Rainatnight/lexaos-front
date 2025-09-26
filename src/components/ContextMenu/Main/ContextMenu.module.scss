@@ -1,0 +1,20 @@
+.contextMenu {
+  position: fixed;
+  background: var(--modal-color);
+  color: #fff;
+  padding: 2px 0;
+  width: 250px;
+  list-style: none;
+  z-index: 1000;
+  font-size: 12px;
+  border: 1px solid rgb(247, 247, 247);
+  li {
+    padding: 5px 15px;
+    cursor: pointer;
+    position: relative;
+
+    &:hover {
+      background: #666;
+    }
+  }
+}

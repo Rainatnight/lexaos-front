@@ -1,36 +1,52 @@
-import React from "react";
+import React, { useState } from "react";
 import cls from "./MainComponent.module.scss";
-import { api } from "@/shared/api/api";
-import { useSelector, useDispatch } from "react-redux";
-import { RootState } from "../../store";
+import { useDispatch } from "react-redux";
 import { setBackground } from "@/store/slices/themeSlice";
+import { ContextMenu, MenuOption } from "../ContextMenu/Main/ContextMenu";
+
+const themes = [
+  { label: "Белый", value: "#ffffff" },
+  { label: "Черный", value: "#000000ff" },
+  { label: "Синий", value: "#ccccff" },
+];
 
 const MainComponent = () => {
-  const background = useSelector((state: RootState) => state.theme.background);
   const dispatch = useDispatch();
+  const [menuPos, setMenuPos] = useState<{ x: number; y: number } | null>(null);
 
-  const sendReq = () => {
-    api
-      .post(`/users`, { name: "alex", email: "yandex.com" })
-      .catch((e) => {
-        console.log(e);
-      })
-      .finally(() => console.log("first"));
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    setMenuPos({ x: e.clientX, y: e.clientY });
   };
 
+  const handleClickOutside = () => setMenuPos(null);
+
+  const options: MenuOption[] = [
+    {
+      label: "Сменить тему",
+      submenu: themes.map((t) => ({
+        label: t.label,
+        action: () => dispatch(setBackground(t.value)),
+        value: t.value,
+      })),
+    },
+    { label: "Другая опция", action: () => console.log("clicked") },
+  ];
+
   return (
-    <div className={cls.main}>
-      <div className={cls.btn} onClick={sendReq}>
-        hi
-      </div>
-      <h1>Фон: {background}</h1>
-      <button onClick={() => dispatch(setBackground("#ffcccc"))}>
-        Красный
-      </button>
-      <button onClick={() => dispatch(setBackground("#ccffcc"))}>
-        Зелёный
-      </button>
-      <button onClick={() => dispatch(setBackground("#ccccff"))}>Синий</button>
+    <div
+      className={cls.main}
+      onContextMenu={handleContextMenu}
+      onClick={handleClickOutside}
+    >
+      {menuPos && (
+        <ContextMenu
+          x={menuPos.x}
+          y={menuPos.y}
+          options={options}
+          onClose={() => setMenuPos(null)}
+        />
+      )}
     </div>
   );
 };

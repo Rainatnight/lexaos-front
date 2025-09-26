@@ -29,7 +29,6 @@ export default function Home() {
       <div
         className={`${geistSans.variable} ${geistMono.variable}`}
         style={{
-          minHeight: "100vh",
           backgroundColor: background,
         }}
       >

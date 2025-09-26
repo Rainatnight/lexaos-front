@@ -1,0 +1,20 @@
+.submenu {
+  position: absolute;
+  background: var(--modal-color);
+  min-width: 150px;
+  list-style: none;
+  padding: 5px 0;
+  border-radius: 4px;
+  top: 0;
+  left: 100%;
+
+  li {
+    padding: 5px 15px;
+    display: flex;
+    justify-content: space-between;
+
+    &:hover {
+      background: #888;
+    }
+  }
+}
