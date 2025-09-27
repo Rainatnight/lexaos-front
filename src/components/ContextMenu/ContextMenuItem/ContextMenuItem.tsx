@@ -10,7 +10,10 @@ export const ContextMenuItem: React.FC<{
   onClose: () => void;
 }> = ({ option, onClose }) => {
   const [submenuVisible, setSubmenuVisible] = useState(false);
-  const background = useSelector((state: RootState) => state.theme.background);
+
+  const backgroundValue = useSelector(
+    (state: RootState) => state.theme.backgroundValue
+  );
 
   return (
     <li
@@ -35,7 +38,7 @@ export const ContextMenuItem: React.FC<{
                 onClose();
               }}
             >
-              {sub.label} {sub.value === background && <span>★</span>}
+              {sub.label} {sub.value === backgroundValue && <span>★</span>}
             </li>
           ))}
         </ul>

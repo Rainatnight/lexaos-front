@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import MainComponent from "@/components/MainComponent/MainComponent";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import ParticlesBG from "@/components/ParticlesBackground";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -15,7 +16,9 @@ const geistMono = Geist_Mono({
 });
 
 export default function Home() {
-  const background = useSelector((state: RootState) => state.theme.background);
+  const { backgroundType, backgroundValue } = useSelector(
+    (state: RootState) => state.theme
+  );
 
   return (
     <>
@@ -26,13 +29,39 @@ export default function Home() {
         <link rel="icon" href="/img/favicon32x.png" sizes="32x32" />
         <link rel="icon" href="/img/favicon16x.png" sizes="16x16" />
       </Head>
+
       <div
         className={`${geistSans.variable} ${geistMono.variable}`}
-        style={{
-          backgroundColor: background,
-        }}
+        style={{ position: "relative", height: "100vh" }}
       >
-        <main>
+        {/* Фон */}
+        {backgroundType === "color" ? (
+          <div
+            style={{
+              backgroundColor: backgroundValue,
+              position: "absolute",
+              top: 0,
+              left: 0,
+              width: "100%",
+              height: "100%",
+              zIndex: 0,
+            }}
+          />
+        ) : (
+          <ParticlesBG
+            preset={backgroundValue as "stars" | "snow" | "firefly"}
+          />
+        )}
+
+        {/* Основной контент */}
+        <main
+          style={{
+            position: "relative",
+            zIndex: 1,
+            width: "100%",
+            height: "100%",
+          }}
+        >
           <MainComponent />
         </main>
       </div>
