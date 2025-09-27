@@ -1,5 +1,3 @@
-"use client";
-
 import React, { useEffect, useRef, useState } from "react";
 import cls from "./ContextMenu.module.scss";
 import { ContextMenuItem } from "../ContextMenuItem/ContextMenuItem";
@@ -16,6 +14,7 @@ export interface MenuOption {
   value?: string;
   action?: () => void;
   submenu?: MenuOption[];
+  hasUnderline?: boolean;
 }
 
 export const ContextMenu: React.FC<ContextMenuProps> = ({

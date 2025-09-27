@@ -7,7 +7,7 @@
   list-style: none;
   z-index: 1000;
   font-size: 12px;
-  border: 1px solid rgb(247, 247, 247);
+  border: 1px solid var(--modal-border);
   li {
     padding: 5px 15px;
     cursor: pointer;

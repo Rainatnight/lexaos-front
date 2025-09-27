@@ -5,9 +5,9 @@ import { setBackground } from "@/store/slices/themeSlice";
 import { ContextMenu, MenuOption } from "../ContextMenu/Main/ContextMenu";
 
 const themes = [
-  { label: "Белый", value: "#ffffff" },
-  { label: "Черный", value: "#000000ff" },
-  { label: "Синий", value: "#ccccff" },
+  { label: "white", value: "#ffffff" },
+  { label: "black", value: "#000000ff" },
+  { label: "blue", value: "#ccccff" },
 ];
 
 const MainComponent = () => {
@@ -23,14 +23,21 @@ const MainComponent = () => {
 
   const options: MenuOption[] = [
     {
-      label: "Сменить тему",
+      label: "Background",
       submenu: themes.map((t) => ({
         label: t.label,
         action: () => dispatch(setBackground(t.value)),
         value: t.value,
       })),
+      hasUnderline: true,
     },
-    { label: "Другая опция", action: () => console.log("clicked") },
+    { label: "option", action: () => console.log("clicked") },
+    {
+      label: "option1 ",
+      action: () => console.log("clicked"),
+      hasUnderline: true,
+    },
+    { label: "option2 ", action: () => console.log("clicked") },
   ];
 
   return (

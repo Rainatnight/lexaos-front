@@ -3,6 +3,7 @@ import { MenuOption } from "../Main/ContextMenu";
 import { useState } from "react";
 import { RootState } from "@/store";
 import cls from "./ContextMenuItem.module.scss";
+import { classNames } from "@/helpers/classNames/classNames";
 
 export const ContextMenuItem: React.FC<{
   option: MenuOption;
@@ -19,6 +20,7 @@ export const ContextMenuItem: React.FC<{
         option.action?.();
         onClose();
       }}
+      className={classNames("", { [cls.underline]: option.hasUnderline }, [])}
     >
       <span>{option.label}</span>
       {option.submenu && <span style={{ float: "right" }}>{">"}</span>}
