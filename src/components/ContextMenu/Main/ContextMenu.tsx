@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import cls from "./ContextMenu.module.scss";
 import { ContextMenuItem } from "../ContextMenuItem/ContextMenuItem";
+import { useDispatch } from "react-redux";
+import { setBackground } from "@/store/slices/themeSlice";
 
 interface ContextMenuProps {
   x: number;
   y: number;
-  options: MenuOption[];
   onClose: () => void;
 }
 
@@ -17,14 +18,38 @@ export interface MenuOption {
   hasUnderline?: boolean;
 }
 
-export const ContextMenu: React.FC<ContextMenuProps> = ({
-  x,
-  y,
-  options,
-  onClose,
-}) => {
+const backgrounds = [
+  { label: "White", value: "#ffffff", type: "color" },
+  { label: "Black", value: "#000000", type: "color" },
+  { label: "Blue", value: "#ccccff", type: "color" },
+  { label: "Stars", value: "stars", type: "preset" },
+  { label: "Snow", value: "snow", type: "preset" },
+  { label: "Firefly", value: "firefly", type: "preset" },
+];
+
+export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
   const menuRef = useRef<HTMLUListElement>(null);
   const [position, setPosition] = useState({ top: y, left: x });
+  const dispatch = useDispatch();
+
+  const options: MenuOption[] = [
+    {
+      label: "Background",
+      hasUnderline: true,
+      submenu: backgrounds.map((b) => ({
+        label: b.label,
+        value: b.value,
+        action: () =>
+          dispatch(setBackground({ type: b.type as any, value: b.value })),
+      })),
+    },
+    { label: "Option 1", action: () => console.log("clicked") },
+    {
+      label: "Option 2",
+      action: () => console.log("clicked"),
+      hasUnderline: true,
+    },
+  ];
 
   // Проверка границ экрана
   useEffect(() => {

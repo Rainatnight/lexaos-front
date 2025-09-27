@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export type BackgroundType = "color" | "stars" | "snow" | "firefly";
+export type BackgroundType = "color" | "preset";
 
 interface ThemeState {
   backgroundType: BackgroundType; // тип фона: цвет или preset
@@ -8,8 +8,8 @@ interface ThemeState {
 }
 
 const initialState: ThemeState = {
-  backgroundType: "color",
-  backgroundValue: "#ffffff", // белый по умолчанию
+  backgroundType: "preset",
+  backgroundValue: "snow", // белый по умолчанию
 };
 
 const themeSlice = createSlice({
