@@ -6,16 +6,21 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "extract-i18n": "i18next -c i18next-parser.config.ts"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.9.0",
     "axios": "^0.24.0",
     "axios-extensions": "^3.1.3",
     "dotenv": "^16.0.0",
+    "i18next": "^23.7.7",
+    "i18next-browser-languagedetector": "^7.2.0",
+    "i18next-http-backend": "^2.4.2",
     "next": "15.5.3",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "react-i18next": "^11.16.6",
     "react-redux": "^9.2.0",
     "react-tsparticles": "^2.12.2",
     "sass": "^1.92.1",
@@ -31,6 +36,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.5.3",
+    "i18next-parser": "^9.3.0",
     "typescript": "^5"
   }
 }

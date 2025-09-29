@@ -3,6 +3,7 @@ import cls from "./ContextMenu.module.scss";
 import { ContextMenuItem } from "../ContextMenuItem/ContextMenuItem";
 import { useDispatch } from "react-redux";
 import { setBackground } from "@/store/slices/themeSlice";
+import { useTranslation } from "react-i18next";
 
 interface ContextMenuProps {
   x: number;
@@ -18,23 +19,24 @@ export interface MenuOption {
   hasUnderline?: boolean;
 }
 
-const backgrounds = [
-  { label: "White", value: "#ffffff", type: "color" },
-  { label: "Black", value: "#000000", type: "color" },
-  { label: "Blue", value: "#ccccff", type: "color" },
-  { label: "Stars", value: "stars", type: "preset" },
-  { label: "Snow", value: "snow", type: "preset" },
-  { label: "Firefly", value: "firefly", type: "preset" },
-];
-
 export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
   const menuRef = useRef<HTMLUListElement>(null);
   const [position, setPosition] = useState({ top: y, left: x });
+  const { t } = useTranslation("contextMenu");
   const dispatch = useDispatch();
+
+  const backgrounds = [
+    { label: t("Белый"), value: "#ffffff", type: "color" },
+    { label: t("Черный"), value: "#000000", type: "color" },
+    { label: t("Синий"), value: "#ccccff", type: "color" },
+    { label: "Stars", value: "stars", type: "preset" },
+    { label: "Snow", value: "snow", type: "preset" },
+    { label: "Firefly", value: "firefly", type: "preset" },
+  ];
 
   const options: MenuOption[] = [
     {
-      label: "Background",
+      label: t("Фон"),
       hasUnderline: true,
       submenu: backgrounds.map((b) => ({
         label: b.label,
