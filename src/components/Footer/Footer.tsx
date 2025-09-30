@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from "react";
-import cls from "./Footer.module.scss";
+import React, { useEffect, useRef, useState } from "react";
 import InstrumentsIcon from "@/shared/api/ui/Icons/InstrumentsIcon";
 import SearchIcon from "@/shared/api/ui/Icons/SearchIcon";
 import { useTranslation } from "react-i18next";
 import i18next from "@/shared/api/config/i18n/i18next";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+import cls from "./Footer.module.scss";
 
 const Footer = () => {
   const [time, setTime] = useState(new Date());
   const { t, i18n } = useTranslation("footer");
+  const [showCalendar, setShowCalendar] = useState(false);
+
+  const calendarRef = useRef<HTMLDivElement>(null);
 
   const hours = String(time.getHours()).padStart(2, "0");
   const minutes = String(time.getMinutes()).padStart(2, "0");
@@ -36,6 +41,25 @@ const Footer = () => {
     i18next.changeLanguage(language);
   }, []);
 
+  // закрытие при клике вне календаря
+  useEffect(() => {
+    if (!showCalendar) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        calendarRef.current &&
+        !calendarRef.current.contains(e.target as Node)
+      ) {
+        setShowCalendar(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [showCalendar]);
+
   return (
     <div className={cls.footer}>
       <div className={cls.left}>
@@ -51,11 +75,37 @@ const Footer = () => {
         <div className={cls.hover} onClick={toggleLanguage}>
           {t("РУС")}
         </div>
-        <div className={cls.time}>
+        <div
+          className={cls.time}
+          onClick={() => setShowCalendar(!showCalendar)}
+        >
           <div>{formattedTime}</div>
           <div>{formattedDate}</div>
         </div>
       </div>
+
+      {showCalendar && (
+        <div className={cls.calendarWrapper} ref={calendarRef}>
+          <Calendar
+            showFixedNumberOfWeeks={true}
+            locale={i18n.language}
+            value={time}
+            tileClassName={({ date, view }) => {
+              if (view === "month") {
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+                const d = new Date(date);
+                d.setHours(0, 0, 0, 0);
+
+                if (d < today) return cls.pastDay; // прошедшие
+                if (d > today) return cls.futureDay; // будущие
+                return cls.today; // сегодня
+              }
+              return "";
+            }}
+          />
+        </div>
+      )}
     </div>
   );
 };

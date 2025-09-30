@@ -19,6 +19,7 @@
     "i18next-http-backend": "^2.4.2",
     "next": "15.5.3",
     "react": "19.1.0",
+    "react-calendar": "^6.0.0",
     "react-dom": "19.1.0",
     "react-i18next": "^11.16.6",
     "react-redux": "^9.2.0",
