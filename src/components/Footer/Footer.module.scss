@@ -54,13 +54,6 @@
   }
 }
 
-.calendarWrapper {
-  position: absolute;
-  right: 20px;
-  bottom: 60px;
-  z-index: 1000;
-}
-
 /* прошедшие дни */
 .pastDay {
   color: rgba(255, 255, 255, 0.233) !important;
@@ -76,6 +69,7 @@
   right: 0px;
   bottom: 35px;
   z-index: 1000;
+  animation: slideUp 0.6s ease forwards;
 
   /* сам контейнер календаря (тёмный полупрозрачный фон) */
   :global(.react-calendar) {
@@ -110,7 +104,7 @@
 
   /* дни недели */
   :global(.react-calendar__month-view__weekdays__weekday) {
-    color: #9aa3a6;
+    color: #fff;
     font-size: 12px;
     text-align: center;
   }
@@ -155,4 +149,15 @@
 :global(.react-calendar__navigation button:enabled:active) {
   background: rgba(255, 255, 255, 0.1) !important; /* лёгкий подсвет */
   outline: none !important;
+}
+
+@keyframes slideUp {
+  0% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

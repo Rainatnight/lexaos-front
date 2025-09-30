@@ -26,9 +26,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
   const dispatch = useDispatch();
 
   const backgrounds = [
-    { label: t("Белый"), value: "#ffffff", type: "color" },
-    { label: t("Черный"), value: "#000000", type: "color" },
-    { label: t("Синий"), value: "#ccccff", type: "color" },
+    { label: t("Белый"), value: "#ffffffce", type: "color" },
+    { label: t("Черный"), value: "#000000b0", type: "color" },
+    { label: t("Синий"), value: "#3c3cffbd", type: "color" },
     { label: "Stars", value: "stars", type: "preset" },
     { label: "Snow", value: "snow", type: "preset" },
     { label: "Firefly", value: "firefly", type: "preset" },
