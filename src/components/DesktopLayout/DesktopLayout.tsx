@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import { Rnd } from "react-rnd";
 import { useSelector, useDispatch } from "react-redux";
@@ -11,11 +9,7 @@ import { TrashBin } from "../DesktopIcons/TrashBin/TrashBin";
 import { Folder } from "../DesktopIcons/Folder/Folder";
 import cls from "./DesktopLayout.module.scss";
 
-export const DesktopLayout = ({
-  contextMenuPosition,
-}: {
-  contextMenuPosition: { x: number; y: number } | null;
-}) => {
+export const DesktopLayout = () => {
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.desktop.items);
 
@@ -34,13 +28,20 @@ export const DesktopLayout = ({
     <div className={cls.desktopWrapper}>
       {/* Статические иконки */}
       {defaultIcons.map((icon) => (
-        <div
+        <Rnd
           key={icon.id}
+          default={{
+            x: icon.x,
+            y: icon.y,
+            width: 80,
+            height: 80,
+          }}
           className={cls.staticIcon}
-          style={{ top: icon.y, left: icon.x }}
+          onDragStop={(e, d) => handleDragStop(icon.id, d.x, d.y)}
+          bounds="parent"
         >
           {icon.component}
-        </div>
+        </Rnd>
       ))}
 
       {/* Динамические папки */}
