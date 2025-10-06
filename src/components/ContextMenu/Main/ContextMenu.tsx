@@ -4,6 +4,8 @@ import { ContextMenuItem } from "../ContextMenuItem/ContextMenuItem";
 import { useDispatch } from "react-redux";
 import { setBackground } from "@/store/slices/themeSlice";
 import { useTranslation } from "react-i18next";
+import { addItem } from "@/store/slices/desktopSlice";
+import { nanoid } from "nanoid";
 
 interface ContextMenuProps {
   x: number;
@@ -34,6 +36,24 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
     { label: "Firefly", value: "firefly", type: "preset" },
   ];
 
+  const createOptions = [
+    {
+      label: t("Папку"),
+      action: () => {
+        dispatch(
+          addItem({
+            id: nanoid(),
+            type: "folder",
+            name: "Новая папка",
+            x: 100 + Math.random() * 200,
+            y: 100 + Math.random() * 200,
+          })
+        );
+        onClose();
+      },
+    },
+  ];
+
   const options: MenuOption[] = [
     {
       label: t("Фон"),
@@ -45,11 +65,13 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
           dispatch(setBackground({ type: b.type as any, value: b.value })),
       })),
     },
-    { label: "Option 1", action: () => console.log("clicked") },
     {
-      label: "Option 2",
-      action: () => console.log("clicked"),
+      label: t("Создать"),
       hasUnderline: true,
+      submenu: createOptions.map((b) => ({
+        label: b.label,
+        action: b.action,
+      })),
     },
   ];
 
