@@ -1,35 +1,73 @@
-"use client";
-import { Folder } from "@/components/DesktopIcons/Folder/Folder";
-import React from "react";
-import { Rnd } from "react-rnd";
-import cls from "./DraggableItem.module.scss";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
+import interact from "interactjs";
 import { moveItem } from "@/store/slices/desktopSlice";
+import { Folder } from "@/components/DesktopIcons/Folder/Folder";
+import cls from "./DraggableItem.module.scss";
 
 interface IProps {
   item: { id: string; type: string; name?: string; x: number; y: number };
 }
 
-const DraggableItemComponent = ({ item }: IProps) => {
+export const DraggableItem = React.memo(({ item }: IProps) => {
   const dispatch = useDispatch();
+  const ref = useRef<HTMLDivElement>(null);
 
-  const handleDragStop = (x: number, y: number) => {
-    dispatch(moveItem({ id: item.id, x, y }));
-  };
+  // Локальное хранение позиции
+  const [pos] = useState(() => ({ x: item.x, y: item.y }));
+
+  useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    let currentPos = { ...pos };
+
+    interact(element).draggable({
+      listeners: {
+        move(event) {
+          const x = (parseFloat(element.dataset.x!) || currentPos.x) + event.dx;
+          const y = (parseFloat(element.dataset.y!) || currentPos.y) + event.dy;
+
+          const parent = element.parentElement!;
+          const parentRect = parent.getBoundingClientRect();
+
+          // ограничиваем движение внутри parent
+          currentPos.x = Math.max(
+            0,
+            Math.min(x, parentRect.width - element.offsetWidth)
+          );
+          currentPos.y = Math.max(
+            0,
+            Math.min(y, parentRect.height - element.offsetHeight)
+          );
+
+          element.style.transform = `translate(${currentPos.x}px, ${currentPos.y}px)`;
+          element.dataset.x = currentPos.x.toString();
+          element.dataset.y = currentPos.y.toString();
+        },
+        end() {
+          dispatch(moveItem({ id: item.id, x: currentPos.x, y: currentPos.y }));
+        },
+      },
+    });
+
+    return () => {
+      interact(element).unset();
+    };
+  }, [dispatch, item.id, pos]);
 
   return (
-    <Rnd
-      default={{ x: item.x, y: item.y, width: 80, height: 80 }}
-      bounds="parent"
-      onDragStop={(e, d) => handleDragStop(d.x, d.y)}
-      enableResizing={false}
+    <div
+      ref={ref}
+      className={cls.draggableItem}
+      style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
+      data-x={pos.x}
+      data-y={pos.y}
     >
-      <div className={cls.draggableItem}>
-        {item.type === "folder" && <Folder name={item.name} />}
-      </div>
-    </Rnd>
+      {item.type === "folder" && <Folder name={item.name || "new"} />}
+      {item.type === "pc" && <>PC</>}
+      {item.type === "vs" && <>VS</>}
+      {item.type === "trash" && <>Trash</>}
+    </div>
   );
-};
-
-// мемоизация, чтобы ререндер других элементов не трогал drag
-export const DraggableItem = React.memo(DraggableItemComponent);
+});

@@ -13,30 +13,17 @@ export const DesktopLayout = () => {
 
   // Дефолтные иконки
   const defaultIcons = [
-    { id: "pc", component: <PC />, x: 0, y: 0 },
-    { id: "vs", component: <Vs />, x: 0, y: 80 },
-    { id: "trash", component: <TrashBin />, x: 0, y: 160 },
+    { id: "pc", component: <PC />, x: 0, y: 0, type: "pc" },
+    { id: "vs", component: <Vs />, x: 0, y: 80, type: "vs" },
+    { id: "trash", component: <TrashBin />, x: 0, y: 160, type: "trash" },
   ];
 
   return (
     <div className={cls.desktopWrapper}>
       {/* Статические иконки */}
-      {/* {defaultIcons.map((icon) => (
-        <Rnd
-          key={icon.id}
-          default={{
-            x: icon.x,
-            y: icon.y,
-            width: 80,
-            height: 80,
-          }}
-          className={cls.staticIcon}
-          onDragStop={(e, d) => handleDragStop(icon.id, d.x, d.y)}
-          bounds="parent"
-        >
-          {icon.component}
-        </Rnd>
-      ))} */}
+      {defaultIcons.map((icon) => (
+        <DraggableItem item={icon} />
+      ))}
 
       {/* Динамические папки */}
       {items.map((item) => (
