@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import cls from "./ContextMenu.module.scss";
 import { ContextMenuItem } from "../ContextMenuItem/ContextMenuItem";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setBackground } from "@/store/slices/themeSlice";
 import { useTranslation } from "react-i18next";
 import { addItem } from "@/store/slices/desktopSlice";
 import { nanoid } from "nanoid";
+import { RootState } from "@/store";
 
 interface ContextMenuProps {
   x: number;
@@ -26,6 +27,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
   const [position, setPosition] = useState({ top: y, left: x });
   const { t } = useTranslation("contextMenu");
   const dispatch = useDispatch();
+  const items = useSelector((state: RootState) => state.desktop.items);
 
   const backgrounds = [
     { label: t("Белый"), value: "#ffffffce", type: "color" },
@@ -40,15 +42,30 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
     {
       label: t("Папку"),
       action: () => {
+        let newX = x;
+        let newY = y;
+        const offset = 10;
+
+        // Проверка наложений с элементами из Redux
+        while (
+          items.some(
+            (i) => Math.abs(i.x - newX) < 80 && Math.abs(i.y - newY) < 80
+          )
+        ) {
+          newX += offset;
+          newY += offset;
+        }
+
         dispatch(
           addItem({
             id: nanoid(),
             type: "folder",
             name: "Новая папка",
-            x: 100 + Math.random() * 200,
-            y: 100 + Math.random() * 200,
+            x: newX,
+            y: newY,
           })
         );
+
         onClose();
       },
     },
