@@ -1,6 +1,9 @@
 {
-  "Фон": "Background",
   "Белый": "White",
   "Черный": "Black",
-  "Синий": "Blue"
+  "Синий": "Blue",
+  "Папку": "Folder",
+  "Новая папка": "New Folder",
+  "Фон": "Background",
+  "Создать": "Create"
 }

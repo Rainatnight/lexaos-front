@@ -1,33 +1,29 @@
 import React from "react";
-
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import cls from "./DesktopLayout.module.scss";
+import { DraggableItem } from "./DraggableItem/DraggableItem";
 import { PC } from "../DesktopIcons/PC/PC";
 import { Vs } from "../DesktopIcons/Vs/Vs";
 import { TrashBin } from "../DesktopIcons/TrashBin/TrashBin";
-import cls from "./DesktopLayout.module.scss";
-import { DraggableItem } from "./DraggableItem/DraggableItem";
 
 export const DesktopLayout = () => {
   const items = useSelector((state: RootState) => state.desktop.items);
 
-  // Дефолтные иконки
   const defaultIcons = [
-    { id: "pc", component: <PC />, x: 0, y: 0, type: "pc" },
-    { id: "vs", component: <Vs />, x: 0, y: 80, type: "vs" },
-    { id: "trash", component: <TrashBin />, x: 0, y: 160, type: "trash" },
+    { id: "pc", type: "pc", x: 0, y: 0, component: <PC /> },
+    { id: "vs", type: "vs", x: 0, y: 80, component: <Vs /> },
+    { id: "trash", type: "trash", x: 0, y: 160, component: <TrashBin /> },
   ];
 
   return (
     <div className={cls.desktopWrapper}>
-      {/* Статические иконки */}
       {defaultIcons.map((icon) => (
-        <DraggableItem item={icon} />
+        <DraggableItem key={icon.id} item={icon} />
       ))}
 
-      {/* Динамические папки */}
       {items.map((item) => (
-        <DraggableItem item={item} />
+        <DraggableItem key={item.id} item={item} />
       ))}
     </div>
   );

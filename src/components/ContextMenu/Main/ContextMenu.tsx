@@ -60,7 +60,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
           addItem({
             id: nanoid(),
             type: "folder",
-            name: "Новая папка",
+            name: t("Новая папка"),
             x: newX,
             y: newY,
           })

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import interact from "interactjs";
 import { moveItem } from "@/store/slices/desktopSlice";
@@ -6,68 +6,73 @@ import { Folder } from "@/components/DesktopIcons/Folder/Folder";
 import cls from "./DraggableItem.module.scss";
 
 interface IProps {
-  item: { id: string; type: string; name?: string; x: number; y: number };
+  item: {
+    id: string;
+    type: string;
+    name?: string;
+    x: number;
+    y: number;
+    component?: React.ReactNode;
+  };
 }
 
 export const DraggableItem = React.memo(({ item }: IProps) => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
 
-  // Локальное хранение позиции
-  const [pos] = useState(() => ({ x: item.x, y: item.y }));
+  // храним текущую позицию в ref, чтобы при drag не перерисовывать компонент
+  const currentPos = useRef({ x: item.x, y: item.y });
 
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
 
-    let currentPos = { ...pos };
-
     interact(element).draggable({
       listeners: {
         move(event) {
-          const x = (parseFloat(element.dataset.x!) || currentPos.x) + event.dx;
-          const y = (parseFloat(element.dataset.y!) || currentPos.y) + event.dy;
+          const x = currentPos.current.x + event.dx;
+          const y = currentPos.current.y + event.dy;
 
           const parent = element.parentElement!;
           const parentRect = parent.getBoundingClientRect();
 
           // ограничиваем движение внутри parent
-          currentPos.x = Math.max(
+          currentPos.current.x = Math.max(
             0,
             Math.min(x, parentRect.width - element.offsetWidth)
           );
-          currentPos.y = Math.max(
+          currentPos.current.y = Math.max(
             0,
             Math.min(y, parentRect.height - element.offsetHeight)
           );
 
-          element.style.transform = `translate(${currentPos.x}px, ${currentPos.y}px)`;
-          element.dataset.x = currentPos.x.toString();
-          element.dataset.y = currentPos.y.toString();
+          element.style.transform = `translate(${currentPos.current.x}px, ${currentPos.current.y}px)`;
         },
         end() {
-          dispatch(moveItem({ id: item.id, x: currentPos.x, y: currentPos.y }));
+          dispatch(
+            moveItem({
+              id: item.id,
+              x: currentPos.current.x,
+              y: currentPos.current.y,
+            })
+          );
         },
       },
     });
 
-    return () => {
-      interact(element).unset();
-    };
-  }, [dispatch, item.id, pos]);
+    return () => interact(element).unset();
+  }, [dispatch, item.id]);
 
   return (
     <div
       ref={ref}
       className={cls.draggableItem}
-      style={{ transform: `translate(${pos.x}px, ${pos.y}px)` }}
-      data-x={pos.x}
-      data-y={pos.y}
+      style={{ transform: `translate(${item.x}px, ${item.y}px)` }}
     >
-      {item.type === "folder" && <Folder name={item.name || "new"} />}
-      {item.type === "pc" && <>PC</>}
-      {item.type === "vs" && <>VS</>}
-      {item.type === "trash" && <>Trash</>}
+      {item.type === "folder" && <Folder name={item.name || "Новая папка"} />}
+      {item.type === "pc" && (item.component || <>PC</>)}
+      {item.type === "vs" && (item.component || <>VS</>)}
+      {item.type === "trash" && (item.component || <>Trash</>)}
     </div>
   );
 });
