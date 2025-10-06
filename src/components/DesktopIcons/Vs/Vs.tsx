@@ -1,5 +1,5 @@
 import React from "react";
-import cls from "../DesktopLayout.module.scss";
+import cls from "../DesktopIcons.module.scss";
 
 export const Vs = () => {
   return (

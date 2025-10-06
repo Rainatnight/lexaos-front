@@ -1,4 +1,4 @@
-import cls from "../DesktopLayout.module.scss";
+import cls from "../DesktopIcons.module.scss";
 import { useTranslation } from "react-i18next";
 
 export const Folder = () => {

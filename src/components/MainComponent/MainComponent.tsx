@@ -3,10 +3,11 @@ import cls from "./MainComponent.module.scss";
 
 import { ContextMenu } from "../ContextMenu/Main/ContextMenu";
 import Footer from "../Footer/Footer";
-import { PC } from "../DesktopLayout/PC/PC";
-import { Folder } from "../DesktopLayout/Folder/Folder";
-import { Vs } from "../DesktopLayout/Vs/Vs";
-import { TrashBin } from "../DesktopLayout/TrashBin/TrashBin";
+import { PC } from "../DesktopIcons/PC/PC";
+import { Folder } from "../DesktopIcons/Folder/Folder";
+import { Vs } from "../DesktopIcons/Vs/Vs";
+import { TrashBin } from "../DesktopIcons/TrashBin/TrashBin";
+import { DesktopLayout } from "../DesktopLayout/DesktopLayout";
 
 const MainComponent = () => {
   const [menuPos, setMenuPos] = useState<{ x: number; y: number } | null>(null);
@@ -25,11 +26,8 @@ const MainComponent = () => {
       onContextMenu={handleContextMenu}
       onClick={handleClickOutside}
     >
-      <PC />
-      <Folder />
-      <Vs />
-      <TrashBin />
       <div className={cls.content}>
+        <DesktopLayout />
         {menuPos && (
           <ContextMenu
             x={menuPos.x}
