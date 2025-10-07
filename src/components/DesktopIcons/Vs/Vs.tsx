@@ -5,7 +5,7 @@ export const Vs = () => {
   return (
     <div className={cls.wrap}>
       <img src="/img/icons/vscode.png" className={cls.img} />
-      <p className={cls.title}>{"test.js"}</p>
+      <p className={cls.title}>{"абв"}</p>
     </div>
   );
 };

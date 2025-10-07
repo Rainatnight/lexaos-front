@@ -8,7 +8,7 @@ import cls from "./DraggableItem.module.scss";
 interface IProps {
   item: {
     id: string;
-    type: string;
+    type: any;
     name?: string;
     x: number;
     y: number;

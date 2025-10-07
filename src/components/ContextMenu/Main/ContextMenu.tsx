@@ -4,7 +4,7 @@ import { ContextMenuItem } from "../ContextMenuItem/ContextMenuItem";
 import { useDispatch, useSelector } from "react-redux";
 import { setBackground } from "@/store/slices/themeSlice";
 import { useTranslation } from "react-i18next";
-import { addItem } from "@/store/slices/desktopSlice";
+import { addItem, sortItemsByName } from "@/store/slices/desktopSlice";
 import { nanoid } from "nanoid";
 import { RootState } from "@/store";
 
@@ -36,6 +36,16 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
     { label: "Stars", value: "stars", type: "preset" },
     { label: "Snow", value: "snow", type: "preset" },
     { label: "Firefly", value: "firefly", type: "preset" },
+  ];
+
+  const sortOptions = [
+    {
+      label: t("Названию"),
+      action: () => {
+        dispatch(sortItemsByName());
+        onClose();
+      },
+    },
   ];
 
   const createOptions = [
@@ -86,6 +96,14 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
       label: t("Создать"),
       hasUnderline: true,
       submenu: createOptions.map((b) => ({
+        label: b.label,
+        action: b.action,
+      })),
+    },
+    {
+      label: t("Сортировать по"),
+      hasUnderline: true,
+      submenu: sortOptions.map((b) => ({
         label: b.label,
         action: b.action,
       })),
