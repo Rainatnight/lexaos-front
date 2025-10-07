@@ -29,6 +29,9 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
 
     interact(element).draggable({
       listeners: {
+        start(event) {
+          event.target.classList.add(cls.dragging); // Добавляем класс dragging
+        },
         move(event) {
           const x = currentPos.current.x + event.dx;
           const y = currentPos.current.y + event.dy;
@@ -48,7 +51,8 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
 
           element.style.transform = `translate(${currentPos.current.x}px, ${currentPos.current.y}px)`;
         },
-        end() {
+        end(event) {
+          event.target.classList.remove(cls.dragging);
           dispatch(
             moveItem({
               id: item.id,

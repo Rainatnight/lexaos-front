@@ -1,11 +1,11 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
-import cls from "./DesktopLayout.module.scss";
 import { DraggableItem } from "./DraggableItem/DraggableItem";
 import { PC } from "../DesktopIcons/PC/PC";
 import { Vs } from "../DesktopIcons/Vs/Vs";
 import { TrashBin } from "../DesktopIcons/TrashBin/TrashBin";
+import cls from "./DesktopLayout.module.scss";
 
 export const DesktopLayout = () => {
   const items = useSelector((state: RootState) => state.desktop.items);
