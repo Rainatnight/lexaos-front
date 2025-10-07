@@ -79,4 +79,6 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
       {item.type === "trash" && (item.component || <>Trash</>)}
     </div>
   );
-});
+}) as React.NamedExoticComponent<IProps>;
+
+DraggableItem.displayName = "DraggableItem";

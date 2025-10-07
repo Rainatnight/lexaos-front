@@ -19,6 +19,14 @@ const eslintConfig = [
       "build/**",
       "next-env.d.ts",
     ],
+    rules: {
+      // разрешить any
+      "@typescript-eslint/no-explicit-any": "off",
+      // разрешить let
+      "prefer-const": "off",
+      // игнорируем max-len
+      "max-len": "off",
+    },
   },
 ];
 

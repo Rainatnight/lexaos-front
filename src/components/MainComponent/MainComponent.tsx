@@ -3,10 +3,7 @@ import cls from "./MainComponent.module.scss";
 
 import { ContextMenu } from "../ContextMenu/Main/ContextMenu";
 import Footer from "../Footer/Footer";
-import { PC } from "../DesktopIcons/PC/PC";
-import { Folder } from "../DesktopIcons/Folder/Folder";
-import { Vs } from "../DesktopIcons/Vs/Vs";
-import { TrashBin } from "../DesktopIcons/TrashBin/TrashBin";
+
 import { DesktopLayout } from "../DesktopLayout/DesktopLayout";
 
 const MainComponent = () => {
