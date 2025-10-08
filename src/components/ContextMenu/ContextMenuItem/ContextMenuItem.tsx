@@ -90,7 +90,7 @@ export const ContextMenuItem: React.FC<{
               }}
             >
               <span>{sub.label}</span>
-              <span>{sub.value === backgroundValue ? "★" : null}</span>
+              {sub.selected && <span className={cls.star}>★</span>}
             </li>
           ))}
         </ul>

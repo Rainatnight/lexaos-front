@@ -4,7 +4,11 @@ import { ContextMenuItem } from "../ContextMenuItem/ContextMenuItem";
 import { useDispatch, useSelector } from "react-redux";
 import { setBackground } from "@/store/slices/themeSlice";
 import { useTranslation } from "react-i18next";
-import { addItem, sortItemsByName } from "@/store/slices/desktopSlice";
+import {
+  addItem,
+  setIconSize,
+  sortItemsByName,
+} from "@/store/slices/desktopSlice";
 import { nanoid } from "nanoid";
 import { RootState } from "@/store";
 
@@ -20,6 +24,7 @@ export interface MenuOption {
   action?: () => void;
   submenu?: MenuOption[];
   hasUnderline?: boolean;
+  selected?: boolean;
 }
 
 export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
@@ -28,6 +33,10 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
   const { t } = useTranslation("contextMenu");
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.desktop.items);
+  const iconSize = useSelector((state: RootState) => state.desktop.iconSize);
+  const backgroundValue = useSelector(
+    (state: RootState) => state.theme.backgroundValue
+  );
 
   const backgrounds = [
     { label: t("Белый"), value: "#ffffffce", type: "color" },
@@ -88,6 +97,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
       submenu: backgrounds.map((b) => ({
         label: b.label,
         value: b.value,
+        selected: b.value === backgroundValue,
         action: () =>
           dispatch(setBackground({ type: b.type as any, value: b.value })),
       })),
@@ -102,11 +112,31 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
     },
     {
       label: t("Сортировать по"),
-      hasUnderline: true,
+
       submenu: sortOptions.map((b) => ({
         label: b.label,
         action: b.action,
       })),
+    },
+    {
+      label: t("Изменить размер"),
+      submenu: [
+        {
+          label: t("Мелкие"),
+          action: () => dispatch(setIconSize(60)),
+          selected: iconSize === 60,
+        },
+        {
+          label: t("Средние"),
+          action: () => dispatch(setIconSize(80)),
+          selected: iconSize === 80,
+        },
+        {
+          label: t("Крупные"),
+          action: () => dispatch(setIconSize(120)),
+          selected: iconSize === 120,
+        },
+      ],
     },
   ];
 

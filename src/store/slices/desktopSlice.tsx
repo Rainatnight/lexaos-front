@@ -14,6 +14,7 @@ export interface DesktopItem {
 
 interface DesktopState {
   items: DesktopItem[];
+  iconSize: number;
 }
 
 const defaultIcons: DesktopItem[] = [
@@ -45,6 +46,7 @@ const defaultIcons: DesktopItem[] = [
 
 const initialState: DesktopState = {
   items: [...defaultIcons],
+  iconSize: 80,
 };
 
 export const desktopSlice = createSlice({
@@ -83,7 +85,7 @@ export const desktopSlice = createSlice({
       state.items = state.items.filter((i) => i.id !== action.payload);
     },
     sortItemsByName(state) {
-      const spacing = 80;
+      const spacing = state.iconSize;
       const margin = 0;
       let screenHeight = 800; // дефолт
       if (typeof window !== "undefined") {
@@ -107,10 +109,42 @@ export const desktopSlice = createSlice({
         }
       }
     },
+    setIconSize(state, action: PayloadAction<number>) {
+      state.iconSize = action.payload;
+
+      // Перерасчёт позиций
+      const spacing = state.iconSize;
+      const margin = 0;
+      let screenHeight = 800;
+
+      if (typeof window !== "undefined") {
+        screenHeight = window.innerHeight;
+      }
+
+      let x = margin;
+      let y = margin;
+
+      for (const item of state.items) {
+        item.x = x;
+        item.y = y;
+        y += spacing;
+
+        if (y + spacing > screenHeight) {
+          y = margin;
+          x += spacing;
+        }
+      }
+    },
   },
 });
 
-export const { addItem, moveItem, setItems, removeItem, sortItemsByName } =
-  desktopSlice.actions;
+export const {
+  addItem,
+  moveItem,
+  setItems,
+  removeItem,
+  sortItemsByName,
+  setIconSize,
+} = desktopSlice.actions;
 
 export default desktopSlice.reducer;
