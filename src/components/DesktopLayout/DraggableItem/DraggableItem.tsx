@@ -76,6 +76,7 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
   };
 
   const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
     if (onContextMenu) onContextMenu(e, item.id);
   };
 

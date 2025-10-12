@@ -15,6 +15,7 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
   const ref = useRef<HTMLUListElement>(null);
   const [pos, setPos] = useState({ top: y, left: x });
   const dispatch = useDispatch();
+
   const item = useSelector((state: RootState) =>
     state.desktop.items.find((i) => i.id === itemId)
   );
@@ -25,6 +26,7 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
 
     const { innerWidth, innerHeight } = window;
     const rect = menu.getBoundingClientRect();
+
     let newX = x;
     let newY = y;
 
@@ -33,12 +35,25 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
 
     setPos({ top: newY, left: newX });
 
-    const handleClickOutside = (e: MouseEvent) => {
-      if (menu && !menu.contains(e.target as Node)) onClose();
+    const handleOutsideEvent = (e: MouseEvent) => {
+      // если клик вне меню
+      if (menu && !menu.contains(e.target as Node)) {
+        e.stopPropagation();
+
+        onClose();
+        dispatch(setSelectedItem(null));
+      }
     };
-    document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
-  }, [x, y, onClose]);
+
+    // ✅ Слушаем оба события с capture, чтобы сработало раньше, чем preventDefault
+    document.addEventListener("click", handleOutsideEvent, true);
+    document.addEventListener("contextmenu", handleOutsideEvent, true);
+
+    return () => {
+      document.removeEventListener("click", handleOutsideEvent, true);
+      document.removeEventListener("contextmenu", handleOutsideEvent, true);
+    };
+  }, [x, y, onClose, dispatch]);
 
   if (!item) return null;
 

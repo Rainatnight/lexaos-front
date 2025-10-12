@@ -6,39 +6,48 @@ import { setSelectedItem } from "@/store/slices/desktopSlice";
 import cls from "./DesktopLayout.module.scss";
 import { ItemContextMenu } from "./ItemContextMenu/ItemContextMenu";
 
-export const DesktopLayout = () => {
+interface Props {
+  onBackgroundContextMenu: (x: number, y: number) => void;
+}
+
+export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.desktop.items);
-
   const [itemMenu, setItemMenu] = useState<{
     x: number;
     y: number;
-    itemId: string | null;
+    itemId: string;
   } | null>(null);
 
-  const handleBackgroundClick = (e: React.MouseEvent) => {
+  const handleBackgroundContextMenu = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
+      e.preventDefault(); // отключаем меню браузера
+      e.stopPropagation();
       dispatch(setSelectedItem(null));
       setItemMenu(null);
+      onBackgroundContextMenu(e.clientX, e.clientY); // открываем меню рабочего стола
     }
   };
 
-  const handleItemContextMenu = (e: React.MouseEvent, itemId: string) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setItemMenu({ x: e.clientX, y: e.clientY, itemId });
-    dispatch(setSelectedItem(itemId));
-  };
-
-  const handleCloseItemMenu = () => setItemMenu(null);
-
   return (
-    <div className={cls.desktopWrapper} onClick={handleBackgroundClick}>
+    <div
+      className={cls.desktopWrapper}
+      onClick={() => {
+        dispatch(setSelectedItem(null));
+        setItemMenu(null);
+      }}
+      onContextMenu={handleBackgroundContextMenu}
+    >
       {items.map((item) => (
         <DraggableItem
           key={item.id}
           item={item}
-          onContextMenu={handleItemContextMenu}
+          onContextMenu={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setItemMenu({ x: e.clientX, y: e.clientY, itemId: item.id });
+            dispatch(setSelectedItem(item.id));
+          }}
         />
       ))}
 
@@ -46,8 +55,8 @@ export const DesktopLayout = () => {
         <ItemContextMenu
           x={itemMenu.x}
           y={itemMenu.y}
-          itemId={itemMenu.itemId!}
-          onClose={handleCloseItemMenu}
+          itemId={itemMenu.itemId}
+          onClose={() => setItemMenu(null)}
         />
       )}
     </div>
