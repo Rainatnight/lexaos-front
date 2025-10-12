@@ -4,6 +4,7 @@ import interact from "interactjs";
 import { moveItem } from "@/store/slices/desktopSlice";
 import { Folder } from "@/components/DesktopIcons/Folder/Folder";
 import cls from "./DraggableItem.module.scss";
+import { Txt } from "@/components/DesktopIcons/Txt/Txt";
 
 interface IProps {
   item: {
@@ -77,6 +78,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
       {item.type === "pc" && (item.component || <>PC</>)}
       {item.type === "vs" && (item.component || <>VS</>)}
       {item.type === "trash" && (item.component || <>Trash</>)}
+      {item.type === "txt" && <Txt name={item.name || "Текстовый документ"} />}
     </div>
   );
 }) as React.NamedExoticComponent<IProps>;

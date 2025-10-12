@@ -88,6 +88,36 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
         onClose();
       },
     },
+    {
+      label: t("Текстовый документ"),
+      action: () => {
+        let newX = x;
+        let newY = y;
+        const offset = 10;
+
+        // Проверка наложений с элементами из Redux
+        while (
+          items.some(
+            (i) => Math.abs(i.x - newX) < 80 && Math.abs(i.y - newY) < 80
+          )
+        ) {
+          newX += offset;
+          newY += offset;
+        }
+
+        dispatch(
+          addItem({
+            id: nanoid(),
+            type: "txt",
+            name: t("Документ"),
+            x: newX,
+            y: newY,
+          })
+        );
+
+        onClose();
+      },
+    },
   ];
 
   const options: MenuOption[] = [
@@ -112,7 +142,6 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
     },
     {
       label: t("Сортировать по"),
-
       submenu: sortOptions.map((b) => ({
         label: b.label,
         action: b.action,
