@@ -16,9 +16,10 @@ interface IProps {
     y: number;
     component?: any;
   };
+  onContextMenu?: (e: React.MouseEvent, itemId: string) => void;
 }
 
-export const DraggableItem = React.memo(({ item }: IProps) => {
+export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const currentPos = useRef({ x: item.x, y: item.y });
@@ -74,6 +75,10 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
     dispatch(setSelectedItem(item.id));
   };
 
+  const handleContextMenu = (e: React.MouseEvent) => {
+    if (onContextMenu) onContextMenu(e, item.id);
+  };
+
   return (
     <div
       ref={ref}
@@ -81,6 +86,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
       className={`${cls.draggableItem} ${
         selectedItemId === item.id ? cls.selected : ""
       }`}
+      onContextMenu={handleContextMenu}
       style={{ transform: `translate(${item.x}px, ${item.y}px)` }}
     >
       {item.type === "pc" && (item.component || <>PC</>)}
