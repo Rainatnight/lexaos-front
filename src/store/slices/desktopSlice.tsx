@@ -15,6 +15,7 @@ export interface DesktopItem {
 interface DesktopState {
   items: DesktopItem[];
   iconSize: number;
+  selectedItemId: string | null;
 }
 
 const defaultIcons: DesktopItem[] = [
@@ -47,6 +48,7 @@ const defaultIcons: DesktopItem[] = [
 const initialState: DesktopState = {
   items: [...defaultIcons],
   iconSize: 80,
+  selectedItemId: null,
 };
 
 export const desktopSlice = createSlice({
@@ -135,6 +137,9 @@ export const desktopSlice = createSlice({
         }
       }
     },
+    setSelectedItem(state, action: PayloadAction<string | null>) {
+      state.selectedItemId = action.payload;
+    },
   },
 });
 
@@ -145,6 +150,7 @@ export const {
   removeItem,
   sortItemsByName,
   setIconSize,
+  setSelectedItem,
 } = desktopSlice.actions;
 
 export default desktopSlice.reducer;

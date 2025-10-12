@@ -1,28 +1,30 @@
 import React, { useEffect, useRef } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import interact from "interactjs";
-import { moveItem } from "@/store/slices/desktopSlice";
+import { moveItem, setSelectedItem } from "@/store/slices/desktopSlice";
 import { Folder } from "@/components/DesktopIcons/Folder/Folder";
-import cls from "./DraggableItem.module.scss";
 import { Txt } from "@/components/DesktopIcons/Txt/Txt";
+import { RootState } from "@/store";
+import cls from "./DraggableItem.module.scss";
 
 interface IProps {
   item: {
     id: string;
-    type: any;
+    type: string;
     name?: string;
     x: number;
     y: number;
-    component?: React.ReactNode;
+    component?: any;
   };
 }
 
 export const DraggableItem = React.memo(({ item }: IProps) => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
-
-  // храним текущую позицию в ref, чтобы при drag не перерисовывать компонент
   const currentPos = useRef({ x: item.x, y: item.y });
+  const selectedItemId = useSelector(
+    (state: RootState) => state.desktop.selectedItemId
+  );
 
   useEffect(() => {
     const element = ref.current;
@@ -31,7 +33,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
     interact(element).draggable({
       listeners: {
         start(event) {
-          event.target.classList.add(cls.dragging); // Добавляем класс dragging
+          event.target.classList.add(cls.dragging);
         },
         move(event) {
           const x = currentPos.current.x + event.dx;
@@ -40,7 +42,6 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
           const parent = element.parentElement!;
           const parentRect = parent.getBoundingClientRect();
 
-          // ограничиваем движение внутри parent
           currentPos.current.x = Math.max(
             0,
             Math.min(x, parentRect.width - element.offsetWidth)
@@ -52,8 +53,8 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
 
           element.style.transform = `translate(${currentPos.current.x}px, ${currentPos.current.y}px)`;
         },
-        end(event) {
-          event.target.classList.remove(cls.dragging);
+        end() {
+          element.classList.remove(cls.dragging);
           dispatch(
             moveItem({
               id: item.id,
@@ -68,19 +69,27 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
     return () => interact(element).unset();
   }, [dispatch, item.id]);
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    dispatch(setSelectedItem(item.id));
+  };
+
   return (
     <div
       ref={ref}
-      className={cls.draggableItem}
+      onClick={handleClick}
+      className={`${cls.draggableItem} ${
+        selectedItemId === item.id ? cls.selected : ""
+      }`}
       style={{ transform: `translate(${item.x}px, ${item.y}px)` }}
     >
-      {item.type === "folder" && <Folder name={item.name || "Новая папка"} />}
       {item.type === "pc" && (item.component || <>PC</>)}
       {item.type === "vs" && (item.component || <>VS</>)}
       {item.type === "trash" && (item.component || <>Trash</>)}
-      {item.type === "txt" && <Txt name={item.name || "Текстовый документ"} />}
+      {item.type === "folder" && <Folder name={item.name || "Новая папка"} />}
+      {item.type === "txt" && <Txt name={item.name || "Документ"} />}
     </div>
   );
-}) as React.NamedExoticComponent<IProps>;
+});
 
 DraggableItem.displayName = "DraggableItem";
