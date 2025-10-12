@@ -12,6 +12,7 @@ const MainComponent = () => {
     x: number;
     y: number;
   } | null>(null);
+
   const selectedItemId = useSelector(
     (state: RootState) => state.desktop.selectedItemId
   );

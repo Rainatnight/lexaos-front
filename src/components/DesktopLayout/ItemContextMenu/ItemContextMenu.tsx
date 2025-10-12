@@ -45,7 +45,7 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
       }
     };
 
-    // ✅ Слушаем оба события с capture, чтобы сработало раньше, чем preventDefault
+    //  Слушаем оба события с capture, чтобы сработало раньше, чем preventDefault
     document.addEventListener("click", handleOutsideEvent, true);
     document.addEventListener("contextmenu", handleOutsideEvent, true);
 

@@ -13,6 +13,7 @@ interface Props {
 export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
   const dispatch = useDispatch();
   const items = useSelector((state: RootState) => state.desktop.items);
+
   const [itemMenu, setItemMenu] = useState<{
     x: number;
     y: number;
@@ -21,7 +22,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
 
   const handleBackgroundContextMenu = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      e.preventDefault(); // отключаем меню браузера
+      e.preventDefault();
       e.stopPropagation();
       dispatch(setSelectedItem(null));
       setItemMenu(null);
