@@ -7,9 +7,10 @@
 }
 
 .error {
-  font-size: 16px;
+  font-size: 20px;
   line-height: 24px;
-  color: var(--additional-error);
+  font-weight: 600;
+  color: red;
 }
 
 .success {
