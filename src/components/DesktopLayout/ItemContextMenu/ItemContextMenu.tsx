@@ -58,17 +58,14 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
   if (!item) return null;
 
   const handleRename = () => {
-    console.log("Переименовать", item.name);
     onClose();
   };
 
   const handleDelete = () => {
-    console.log("Удалить", item.name);
     onClose();
   };
 
   const handleProperties = () => {
-    console.log("Свойства", item);
     onClose();
   };
 

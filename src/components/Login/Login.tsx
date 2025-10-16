@@ -6,9 +6,12 @@ import { useTranslation } from "react-i18next";
 import { Text, TextVariants } from "@/shared/api/ui/Text/Text";
 import { useRouter } from "next/router";
 import { api } from "@/shared/api/api";
+import useSession from "@/shared/hooks/useSession";
 
 export const Login = () => {
   const router = useRouter();
+  const session = useSession();
+
   const { t } = useTranslation("login");
   const [password, setPassword] = useState("");
   const [login, setLogin] = useState("");
@@ -18,22 +21,24 @@ export const Login = () => {
     router.push("/");
   };
 
-  const loginFunc = () => {
-    console.log(1);
-  };
+  const loginFunc = () => {};
 
   const createAcc = () => {
     api
       .post("/create", { login, password })
-      .then(() => {
-        console.log(1);
+      .then(({ data }) => {
+        session.login(data.token, data.expiredToken, data.userId);
+        session.setUser({
+          login: data.login,
+          id: data.userId,
+        });
+        router.push("/");
       })
       .catch((e) => {
         setError(e.response?.data?.msg);
       });
   };
 
-  console.log(error);
   return (
     <div className={cls.wrapper}>
       <div className={cls.background}></div>
