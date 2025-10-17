@@ -42,7 +42,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
       onContextMenu={handleBackgroundContextMenu}
     >
       <h1>{user?.login}</h1>
-      <h2>{user?.login}</h2>
+
       {items.map((item) => (
         <DraggableItem
           key={item.id}

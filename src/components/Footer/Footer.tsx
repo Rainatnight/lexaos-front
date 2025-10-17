@@ -6,11 +6,13 @@ import i18next from "@/shared/api/config/i18n/i18next";
 import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import cls from "./Footer.module.scss";
+import { Menu } from "./Menu/Menu";
 
 const Footer = () => {
   const [time, setTime] = useState(new Date());
   const { t, i18n } = useTranslation("footer");
   const [showCalendar, setShowCalendar] = useState(false);
+  const [showModal, setShowModal] = useState(false);
 
   const calendarRef = useRef<HTMLDivElement>(null);
 
@@ -63,7 +65,7 @@ const Footer = () => {
   return (
     <div className={cls.footer}>
       <div className={cls.left}>
-        <div className={cls.hover}>
+        <div className={cls.hover} onClick={() => setShowModal(!showModal)}>
           <InstrumentsIcon />
         </div>
         <div className={cls.hover}>
@@ -106,6 +108,8 @@ const Footer = () => {
           />
         </div>
       )}
+
+      {showModal && <Menu />}
     </div>
   );
 };
