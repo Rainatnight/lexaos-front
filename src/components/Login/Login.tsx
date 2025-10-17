@@ -21,7 +21,21 @@ export const Login = () => {
     router.push("/");
   };
 
-  const loginFunc = () => {};
+  const loginFunc = () => {
+    api
+      .put("/login", { login, password })
+      .then(({ data }) => {
+        session.login(data.token, data.expiredToken, data.userId);
+        session.setUser({
+          login: data.login,
+          id: data.userId,
+        });
+        router.push("/");
+      })
+      .catch((e) => {
+        setError(e.response?.data?.msg);
+      });
+  };
 
   const createAcc = () => {
     api

@@ -2,14 +2,22 @@ import React from "react";
 import cls from "./Menu.module.scss";
 import Image from "next/image";
 import useSession from "@/shared/hooks/useSession";
+import { useRouter } from "next/router";
 
 export const Menu = () => {
   const session = useSession();
+  const router = useRouter();
 
   return (
     <div className={cls.menu}>
       <div className={cls.left}>
-        <div className={cls.iconWrapper} onClick={() => session.clear()}>
+        <div
+          className={cls.iconWrapper}
+          onClick={() => {
+            session.clear();
+            // router.push("login");
+          }}
+        >
           <Image src="/img/logout.png" width={40} height={40} alt="logout" />
         </div>
       </div>
