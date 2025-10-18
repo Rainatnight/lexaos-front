@@ -1,12 +1,47 @@
 import cls from "../DesktopIcons.module.scss";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
+import { renameItem, setRenamingItem } from "@/store/slices/desktopSlice";
+import { useState, useEffect, useRef } from "react";
 
-export const Folder = ({ name }: { name: string }) => {
+export const Folder = ({ name, id }: { name: string; id: string }) => {
   const { t } = useTranslation("desktopLayout");
+  const dispatch = useDispatch();
   const iconSize = useSelector((state: RootState) => state.desktop.iconSize);
+  const renamingItemId = useSelector(
+    (state: RootState) => state.desktop.renamingItemId
+  );
+
+  const [tempName, setTempName] = useState(name);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const isRenaming = renamingItemId === id;
+
+  useEffect(() => {
+    if (isRenaming && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isRenaming]);
+
+  const handleBlur = () => {
+    const newName = tempName.trim();
+    if (newName && newName !== name) {
+      dispatch(renameItem({ id, newName }));
+    } else {
+      dispatch(setRenamingItem(null));
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      e.currentTarget.blur();
+    } else if (e.key === "Escape") {
+      dispatch(setRenamingItem(null));
+    }
+  };
 
   return (
     <div className={cls.wrap} style={{ width: iconSize, height: iconSize }}>
@@ -18,7 +53,18 @@ export const Folder = ({ name }: { name: string }) => {
         height={iconSize / 2}
       />
 
-      <p className={cls.title}>{name ? name : t("Новая папка")}</p>
+      {isRenaming ? (
+        <input
+          ref={inputRef}
+          className={cls.renameInput}
+          value={tempName}
+          onChange={(e) => setTempName(e.target.value)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+        />
+      ) : (
+        <p className={cls.title}>{name || t("Новая папка")}</p>
+      )}
     </div>
   );
 };

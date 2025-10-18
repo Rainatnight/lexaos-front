@@ -26,6 +26,10 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
   const selectedItemId = useSelector(
     (state: RootState) => state.desktop.selectedItemId
   );
+  const renamingItemId = useSelector(
+    (state: RootState) => state.desktop.renamingItemId
+  );
+  const isRenaming = renamingItemId === item.id;
 
   useEffect(() => {
     const element = ref.current;
@@ -93,7 +97,9 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
       {item.type === "pc" && (item.component || <>PC</>)}
       {item.type === "vs" && (item.component || <>VS</>)}
       {item.type === "trash" && (item.component || <>Trash</>)}
-      {item.type === "folder" && <Folder name={item.name || "Новая папка"} />}
+      {item.type === "folder" && (
+        <Folder id={item.id} name={item.name || "Новая папка"} />
+      )}
       {item.type === "txt" && <Txt name={item.name || "Документ"} />}
     </div>
   );

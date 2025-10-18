@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { setSelectedItem } from "@/store/slices/desktopSlice";
+import { setRenamingItem, setSelectedItem } from "@/store/slices/desktopSlice";
 import cls from "../../ContextMenu/Main/ContextMenu.module.scss";
 
 interface Props {
@@ -58,9 +58,9 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
   if (!item) return null;
 
   const handleRename = () => {
+    dispatch(setRenamingItem(itemId));
     onClose();
   };
-
   const handleDelete = () => {
     onClose();
   };
