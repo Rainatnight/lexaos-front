@@ -2,8 +2,6 @@ import { api } from "@/shared/api/api";
 import useSession, { UserData } from "@/shared/hooks/useSession";
 import { useEffect } from "react";
 
-import { io } from "socket.io-client";
-
 export const SessionContainer = () => {
   const session = useSession();
 

@@ -114,6 +114,7 @@ const useSession = (): Session => {
       state.token,
       state.user,
       state.socket,
+      dispatch,
     ]
   );
 };

@@ -1,7 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useSelector } from "react-redux";
 import { MenuOption } from "../Main/ContextMenu";
-import { RootState } from "@/store";
 import cls from "./ContextMenuItem.module.scss";
 import { classNames } from "@/helpers/classNames/classNames";
 
@@ -16,10 +14,6 @@ export const ContextMenuItem: React.FC<{
 
   const liRef = useRef<HTMLLIElement | null>(null);
   const submenuRef = useRef<HTMLUListElement | null>(null);
-
-  const backgroundValue = useSelector(
-    (state: RootState) => state.theme.backgroundValue
-  );
 
   useEffect(() => {
     if (!submenuVisible) return;

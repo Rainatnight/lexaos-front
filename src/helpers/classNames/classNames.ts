@@ -16,7 +16,7 @@ export function classNames(
     cls,
     ...aditional.filter(Boolean),
     ...Object.entries(mods)
-      .filter(([_, value]) => !!value)
-      .map(([key, _]) => key),
+      .filter(([, value]) => !!value) // убрали первый аргумент
+      .map(([key]) => key), // убрали второй аргумент
   ].join(" ");
 }

@@ -82,7 +82,7 @@ export const Input: React.FC<Props> = memo(
 
     useEffect(() => {
       if (autoFocus) ref.current?.focus();
-    }, []);
+    }, [autoFocus]);
 
     return (
       <div className={classNames(cls.wrapper, {}, [className, cls[size]])}>
@@ -152,3 +152,4 @@ export const Input: React.FC<Props> = memo(
     prev.errorText === next.errorText &&
     prev.onChange === next.onChange
 );
+Input.displayName = "Input";
