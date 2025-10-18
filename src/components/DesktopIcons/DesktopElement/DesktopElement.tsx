@@ -6,7 +6,15 @@ import { RootState } from "@/store";
 import { renameItem, setRenamingItem } from "@/store/slices/desktopSlice";
 import { useState, useEffect, useRef } from "react";
 
-export const Folder = ({ name, id }: { name: string; id: string }) => {
+export const DesktopElement = ({
+  name,
+  id,
+  type,
+}: {
+  name: string;
+  id: string;
+  type: "folder" | "txt";
+}) => {
   const { t } = useTranslation("desktopLayout");
   const dispatch = useDispatch();
   const iconSize = useSelector((state: RootState) => state.desktop.iconSize);
@@ -46,8 +54,8 @@ export const Folder = ({ name, id }: { name: string; id: string }) => {
   return (
     <div className={cls.wrap} style={{ width: iconSize, height: iconSize }}>
       <Image
-        src="/img/icons/folder.png"
-        alt="Folder"
+        src={type === "txt" ? "/img/icons/txt.png" : "/img/icons/folder.png"}
+        alt={type === "txt" ? "txt" : "folder"}
         className={cls.img}
         width={iconSize / 2}
         height={iconSize / 2}

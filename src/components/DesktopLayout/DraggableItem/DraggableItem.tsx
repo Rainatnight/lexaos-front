@@ -2,8 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import interact from "interactjs";
 import { moveItem, setSelectedItem } from "@/store/slices/desktopSlice";
-import { Folder } from "@/components/DesktopIcons/Folder/Folder";
-import { Txt } from "@/components/DesktopIcons/Txt/Txt";
+import { DesktopElement } from "@/components/DesktopIcons/DesktopElement/DesktopElement";
 import { RootState } from "@/store";
 import cls from "./DraggableItem.module.scss";
 
@@ -26,10 +25,6 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
   const selectedItemId = useSelector(
     (state: RootState) => state.desktop.selectedItemId
   );
-  const renamingItemId = useSelector(
-    (state: RootState) => state.desktop.renamingItemId
-  );
-  const isRenaming = renamingItemId === item.id;
 
   useEffect(() => {
     const element = ref.current;
@@ -98,9 +93,19 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
       {item.type === "vs" && (item.component || <>VS</>)}
       {item.type === "trash" && (item.component || <>Trash</>)}
       {item.type === "folder" && (
-        <Folder id={item.id} name={item.name || "Новая папка"} />
+        <DesktopElement
+          id={item.id}
+          name={item.name || "Новая папка"}
+          type="folder"
+        />
       )}
-      {item.type === "txt" && <Txt name={item.name || "Документ"} />}
+      {item.type === "txt" && (
+        <DesktopElement
+          name={item.name || "Документ"}
+          id={item.id}
+          type="txt"
+        />
+      )}
     </div>
   );
 });
