@@ -16,7 +16,6 @@ interface DesktopState {
   items: DesktopItem[];
   iconSize: number;
   selectedItemId: string | null;
-  selectedItemIds: string[];
   renamingItemId: null | string;
 }
 
@@ -51,7 +50,6 @@ const initialState: DesktopState = {
   items: [...defaultIcons],
   iconSize: 80,
   selectedItemId: null,
-  selectedItemIds: [],
   renamingItemId: null,
 };
 
@@ -129,14 +127,6 @@ export const desktopSlice = createSlice({
 
     setSelectedItem(state, action: PayloadAction<string | null>) {
       state.selectedItemId = action.payload;
-      state.selectedItemIds = action.payload ? [action.payload] : [];
-    },
-
-    // 👇 новое — множественное выделение
-    setSelectedItems(state, action: PayloadAction<string[]>) {
-      state.selectedItemIds = action.payload;
-      state.selectedItemId =
-        action.payload.length === 1 ? action.payload[0] : null;
     },
 
     setRenamingItem(state, action: PayloadAction<string | null>) {
@@ -159,7 +149,6 @@ export const {
   sortItemsByName,
   setIconSize,
   setSelectedItem,
-  setSelectedItems,
   setRenamingItem,
   renameItem,
 } = desktopSlice.actions;

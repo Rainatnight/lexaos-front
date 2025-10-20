@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { DraggableItem } from "./DraggableItem/DraggableItem";
-import { setSelectedItem, setSelectedItems } from "@/store/slices/desktopSlice";
+import { setSelectedItem } from "@/store/slices/desktopSlice";
 import cls from "./DesktopLayout.module.scss";
 import { ItemContextMenu } from "./ItemContextMenu/ItemContextMenu";
 import useSession from "@/shared/hooks/useSession";
@@ -89,8 +89,6 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
 
         if (intersects) selectedIds.push(item.id);
       });
-
-      dispatch(setSelectedItems(selectedIds));
     }
 
     setSelectionRect(null);
