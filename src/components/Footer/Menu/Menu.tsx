@@ -3,11 +3,11 @@ import cls from "./Menu.module.scss";
 import Image from "next/image";
 import useSession from "@/shared/hooks/useSession";
 
-export const Menu = () => {
+export const Menu = ({ menuRef }) => {
   const session = useSession();
 
   return (
-    <div className={cls.menu}>
+    <div className={cls.menu} ref={menuRef}>
       <div className={cls.left}>
         <div
           className={cls.iconWrapper}

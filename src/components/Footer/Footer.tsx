@@ -15,6 +15,7 @@ const Footer = () => {
   const [showModal, setShowModal] = useState(false);
 
   const calendarRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const hours = String(time.getHours()).padStart(2, "0");
   const minutes = String(time.getMinutes()).padStart(2, "0");
@@ -61,6 +62,19 @@ const Footer = () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [showCalendar]);
+
+  useEffect(() => {
+    if (!showModal) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setShowModal(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [showModal]);
 
   return (
     <div className={cls.footer}>
@@ -109,7 +123,11 @@ const Footer = () => {
         </div>
       )}
 
-      {showModal && <Menu />}
+      {showModal && (
+        <>
+          <Menu menuRef={menuRef} />
+        </>
+      )}
     </div>
   );
 };
