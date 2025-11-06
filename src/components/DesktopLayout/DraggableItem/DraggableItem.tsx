@@ -1,10 +1,16 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import interact from "interactjs";
-import { moveItem, setSelectedItem } from "@/store/slices/desktopSlice";
+import {
+  closeFolder,
+  moveItem,
+  openFolder,
+  setSelectedItem,
+} from "@/store/slices/desktopSlice";
 import { DesktopElement } from "@/components/DesktopIcons/DesktopElement/DesktopElement";
 import { RootState } from "@/store";
 import cls from "./DraggableItem.module.scss";
+import { FolderModal } from "../FolderModal/FolderModal";
 
 interface IProps {
   item: {
@@ -25,7 +31,12 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
   const selectedItemId = useSelector(
     (state: RootState) => state.desktop.selectedItemId
   );
+  const openFolders = useSelector(
+    (state: RootState) => state.desktop.openFolders
+  );
+  const isOpen = openFolders.includes(item.id);
 
+  // --- interact.js перетаскивание
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
@@ -79,34 +90,53 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
     if (onContextMenu) onContextMenu(e, item.id);
   };
 
+  // --- двойной клик открывает окно
+  const handleDoubleClick = () => {
+    if (item.type === "folder") {
+      dispatch(openFolder(item.id));
+    }
+  };
+
+  const handleCloseWindow = () => {
+    dispatch(closeFolder(item.id));
+  };
+
   return (
-    <div
-      ref={ref}
-      onClick={handleClick}
-      className={`${cls.draggableItem} ${
-        selectedItemId === item.id ? cls.selected : ""
-      }`}
-      onContextMenu={handleContextMenu}
-      style={{ transform: `translate(${item.x}px, ${item.y}px)` }}
-    >
-      {item.type === "pc" && (item.component || <>PC</>)}
-      {item.type === "vs" && (item.component || <>VS</>)}
-      {item.type === "trash" && (item.component || <>Trash</>)}
-      {item.type === "folder" && (
-        <DesktopElement
-          id={item.id}
-          name={item.name || "Новая папка"}
-          type="folder"
-        />
+    <>
+      <div
+        ref={ref}
+        onClick={handleClick}
+        onDoubleClick={handleDoubleClick}
+        className={`${cls.draggableItem} ${
+          selectedItemId === item.id ? cls.selected : ""
+        }`}
+        onContextMenu={handleContextMenu}
+        style={{ transform: `translate(${item.x}px, ${item.y}px)` }}
+      >
+        {item.type === "pc" && (item.component || <>PC</>)}
+        {item.type === "vs" && (item.component || <>VS</>)}
+        {item.type === "trash" && (item.component || <>Trash</>)}
+        {item.type === "folder" && (
+          <DesktopElement
+            id={item.id}
+            name={item.name || "Новая папка"}
+            type="folder"
+          />
+        )}
+        {item.type === "txt" && (
+          <DesktopElement
+            name={item.name || "Документ"}
+            id={item.id}
+            type="txt"
+          />
+        )}
+      </div>
+
+      {/* === окно папки === */}
+      {isOpen && item.type === "folder" && (
+        <FolderModal item={item} handleCloseWindow={handleCloseWindow} />
       )}
-      {item.type === "txt" && (
-        <DesktopElement
-          name={item.name || "Документ"}
-          id={item.id}
-          type="txt"
-        />
-      )}
-    </div>
+    </>
   );
 });
 

@@ -1,8 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { setRenamingItem, setSelectedItem } from "@/store/slices/desktopSlice";
+import {
+  openFolder,
+  setRenamingItem,
+  setSelectedItem,
+} from "@/store/slices/desktopSlice";
 import cls from "../../ContextMenu/Main/ContextMenu.module.scss";
+import { useTranslation } from "react-i18next";
 
 interface Props {
   x: number;
@@ -12,6 +17,7 @@ interface Props {
 }
 
 export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
+  const { t } = useTranslation("itemContextMenu");
   const ref = useRef<HTMLUListElement>(null);
   const [pos, setPos] = useState({ top: y, left: x });
   const dispatch = useDispatch();
@@ -19,7 +25,7 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
   const item = useSelector((state: RootState) =>
     state.desktop.items.find((i) => i.id === itemId)
   );
-
+  console.log(item);
   useEffect(() => {
     const menu = ref.current;
     if (!menu) return;
@@ -69,11 +75,20 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
     onClose();
   };
 
+  const handleOpen = () => {
+    dispatch(openFolder(itemId)); // Открыть окно папки
+    onClose();
+  };
+
   const options = [
-    { label: "Переименовать", action: handleRename },
+    { label: t("Переименовать"), action: handleRename },
     { label: "Удалить", action: handleDelete },
     { label: "Свойства", action: handleProperties },
   ];
+
+  item.type === "folder"
+    ? options.push({ label: "Открыть", action: handleOpen })
+    : null;
 
   return (
     <ul

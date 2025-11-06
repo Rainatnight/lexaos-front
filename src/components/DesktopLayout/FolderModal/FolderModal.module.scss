@@ -1,0 +1,37 @@
+.folderWindow {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  width: 320px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+  z-index: 100;
+}
+
+.folderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0078d7;
+  color: white;
+  padding: 6px 10px;
+  font-weight: 500;
+
+  button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+  }
+}
+
+.folderContent {
+  background: #f9f9f9;
+  padding: 10px;
+  min-height: 200px;
+  color: red;
+}
