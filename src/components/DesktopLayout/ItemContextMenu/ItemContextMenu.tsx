@@ -76,19 +76,19 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
   };
 
   const handleOpen = () => {
-    dispatch(openFolder(itemId)); // Открыть окно папки
+    dispatch(openFolder({ id: itemId, x, y }));
     onClose();
   };
 
   const options = [
     { label: t("Переименовать"), action: handleRename },
-    { label: "Удалить", action: handleDelete },
-    { label: "Свойства", action: handleProperties },
+    { label: t("Удалить"), action: handleDelete },
+    { label: t("Свойства"), action: handleProperties },
   ];
 
-  item.type === "folder"
-    ? options.push({ label: "Открыть", action: handleOpen })
-    : null;
+  if (item.type === "folder") {
+    options.push({ label: t("Открыть"), action: handleOpen });
+  }
 
   return (
     <ul

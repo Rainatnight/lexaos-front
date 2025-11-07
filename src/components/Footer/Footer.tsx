@@ -74,7 +74,7 @@ const Footer = () => {
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [menuRef.current]);
+  }, [showModal]);
 
   return (
     <div className={cls.footer}>

@@ -6,7 +6,6 @@
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint",
     "extract-i18n": "i18next -c i18next-parser.config.ts"
   },
   "dependencies": {

@@ -12,12 +12,18 @@ export interface DesktopItem {
   component?: React.ReactNode;
 }
 
+export interface IOpenFolder {
+  id: string;
+  x: number;
+  y: number;
+}
+
 interface DesktopState {
   items: DesktopItem[];
   iconSize: number;
   selectedItemId: string | null;
   renamingItemId: null | string;
-  openFolders: string[];
+  openFolders: IOpenFolder[];
 }
 
 const defaultIcons: DesktopItem[] = [
@@ -141,14 +147,25 @@ export const desktopSlice = createSlice({
       state.renamingItemId = null;
     },
 
-    openFolder: (state, action: PayloadAction<string>) => {
-      if (!state.openFolders.includes(action.payload)) {
-        state.openFolders.push(action.payload);
-      }
+    openFolder: (
+      state,
+      action: PayloadAction<{ id: string; x: number; y: number }>
+    ) => {
+      const { id, x, y } = action.payload;
+
+      if (state.openFolders.some((f) => f.id === id)) return;
+
+      //  небольшое смещение, чтобы не перекрывало курсор
+      state.openFolders.push({
+        id,
+        x: x + 10,
+        y: y + 10,
+      });
     },
+
     closeFolder: (state, action: PayloadAction<string>) => {
       state.openFolders = state.openFolders.filter(
-        (id) => id !== action.payload
+        (f) => f.id !== action.payload
       );
     },
   },

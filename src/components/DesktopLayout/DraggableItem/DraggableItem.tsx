@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import interact from "interactjs";
 import {
@@ -34,7 +34,9 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
   const openFolders = useSelector(
     (state: RootState) => state.desktop.openFolders
   );
-  const isOpen = openFolders.includes(item.id);
+
+  const folderData = openFolders.find((f) => f.id === item.id);
+  const isOpen = !!folderData;
 
   // --- interact.js перетаскивание
   useEffect(() => {
@@ -91,9 +93,15 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
   };
 
   // --- двойной клик открывает окно
-  const handleDoubleClick = () => {
+  const handleDoubleClick = (e: React.MouseEvent) => {
     if (item.type === "folder") {
-      dispatch(openFolder(item.id));
+      dispatch(
+        openFolder({
+          id: item.id,
+          x: e.clientX,
+          y: e.clientY,
+        })
+      );
     }
   };
 
@@ -134,7 +142,11 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
 
       {/* === окно папки === */}
       {isOpen && item.type === "folder" && (
-        <FolderModal item={item} handleCloseWindow={handleCloseWindow} />
+        <FolderModal
+          item={item}
+          handleCloseWindow={handleCloseWindow}
+          position={{ x: folderData!.x, y: folderData!.y }}
+        />
       )}
     </>
   );
