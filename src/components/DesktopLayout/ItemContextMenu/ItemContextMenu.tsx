@@ -25,7 +25,7 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
   const item = useSelector((state: RootState) =>
     state.desktop.items.find((i) => i.id === itemId)
   );
-  console.log(item);
+
   useEffect(() => {
     const menu = ref.current;
     if (!menu) return;

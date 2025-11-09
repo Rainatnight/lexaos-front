@@ -24,6 +24,7 @@ interface DesktopState {
   selectedItemId: string | null;
   renamingItemId: null | string;
   openFolders: IOpenFolder[];
+  activeFolderId: string | null;
 }
 
 const defaultIcons: DesktopItem[] = [
@@ -59,6 +60,7 @@ const initialState: DesktopState = {
   selectedItemId: null,
   renamingItemId: null,
   openFolders: [],
+  activeFolderId: null as string | null,
 };
 
 export const desktopSlice = createSlice({
@@ -84,6 +86,15 @@ export const desktopSlice = createSlice({
       if (item) {
         item.x = action.payload.x;
         item.y = action.payload.y;
+      }
+    },
+
+    moveFolder: (state, action) => {
+      const { id, x, y } = action.payload;
+      const folder = state.openFolders.find((f) => f.id === id);
+      if (folder) {
+        folder.x = x;
+        folder.y = y;
       }
     },
 
@@ -168,6 +179,10 @@ export const desktopSlice = createSlice({
         (f) => f.id !== action.payload
       );
     },
+
+    setActiveFolder: (state, action) => {
+      state.activeFolderId = action.payload;
+    },
   },
 });
 
@@ -183,6 +198,8 @@ export const {
   renameItem,
   openFolder,
   closeFolder,
+  setActiveFolder,
+  moveFolder,
 } = desktopSlice.actions;
 
 export default desktopSlice.reducer;
