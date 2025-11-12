@@ -172,6 +172,8 @@ export const desktopSlice = createSlice({
         x: x + 10,
         y: y + 10,
       });
+
+      state.activeFolderId = id;
     },
 
     closeFolder: (state, action: PayloadAction<string>) => {
