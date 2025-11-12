@@ -7,6 +7,7 @@ import Calendar from "react-calendar";
 import "react-calendar/dist/Calendar.css";
 import cls from "./Footer.module.scss";
 import { Menu } from "./Menu/Menu";
+import { BottomPanel } from "./BottomPanel/BottomPanel";
 
 const Footer = () => {
   const [time, setTime] = useState(new Date());
@@ -85,6 +86,10 @@ const Footer = () => {
         <div className={cls.hover}>
           <SearchIcon />
         </div>
+      </div>
+
+      <div className={cls.mid}>
+        <BottomPanel />
       </div>
 
       <div className={cls.right}>
