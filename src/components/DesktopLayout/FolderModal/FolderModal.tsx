@@ -91,7 +91,10 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
     >
       <div className={cls.folderHeader}>
         <span>{item.name || "Папка"}</span>
-        <button onClick={handleCloseWindow}>×</button>
+        <div className={cls.controls}>
+          <button onClick={handleCloseWindow}>-</button>
+          <button onClick={handleCloseWindow}>×</button>
+        </div>
       </div>
       <div className={cls.folderContent}>
         <p>Здесь будет содержимое папки</p>
