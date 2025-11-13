@@ -1,14 +1,23 @@
-import React, { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import cls from "./FolderModal.module.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
-import { moveFolder, setActiveFolder } from "@/store/slices/desktopSlice";
+import {
+  minimizeFolder,
+  moveFolder,
+  setActiveFolder,
+} from "@/store/slices/desktopSlice";
 import interact from "interactjs";
 
 export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const pos = useRef({ x: position.x, y: position.y });
+  const folderState = useSelector((state: RootState) =>
+    state.desktop.openFolders.find((f) => f.id === item.id)
+  );
+
+  const minimized = folderState?.minimized || false;
 
   const activeFolderId = useSelector(
     (state: RootState) => state.desktop.activeFolderId
@@ -19,6 +28,11 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
   // === делаем окно активным при клике ===
   const handleMouseDown = () => {
     dispatch(setActiveFolder(item.id));
+  };
+
+  const handleMinimize = () => {
+    dispatch(minimizeFolder(item.id));
+    dispatch(setActiveFolder(null)); // убрать фокус с окна
   };
 
   useEffect(() => {
@@ -82,7 +96,9 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
     <div
       ref={ref}
       onMouseDown={handleMouseDown}
-      className={`${cls.folderWindow} ${isActive ? cls.active : ""}`}
+      className={`${cls.folderWindow} ${isActive ? cls.active : ""} ${
+        minimized ? cls.minimized : ""
+      }`}
       style={{
         top: 0,
         left: 0,
@@ -92,7 +108,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
       <div className={cls.folderHeader}>
         <span>{item.name || "Папка"}</span>
         <div className={cls.controls}>
-          <button onClick={handleCloseWindow}>-</button>
+          <button onClick={handleMinimize}>-</button>
           <button onClick={handleCloseWindow}>×</button>
         </div>
       </div>

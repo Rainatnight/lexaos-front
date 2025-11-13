@@ -16,6 +16,7 @@ export interface IOpenFolder {
   id: string;
   x: number;
   y: number;
+  minimized: boolean;
 }
 
 interface DesktopState {
@@ -171,9 +172,20 @@ export const desktopSlice = createSlice({
         id,
         x: x + 10,
         y: y + 10,
+        minimized: false,
       });
 
       state.activeFolderId = id;
+    },
+
+    minimizeFolder: (state, action: PayloadAction<string>) => {
+      const folder = state.openFolders.find((f) => f.id === action.payload);
+      if (folder) folder.minimized = true;
+    },
+    restoreFolder: (state, action: PayloadAction<string>) => {
+      const folder = state.openFolders.find((f) => f.id === action.payload);
+      if (folder) folder.minimized = false;
+      state.activeFolderId = action.payload;
     },
 
     closeFolder: (state, action: PayloadAction<string>) => {
@@ -202,6 +214,8 @@ export const {
   closeFolder,
   setActiveFolder,
   moveFolder,
+  minimizeFolder,
+  restoreFolder,
 } = desktopSlice.actions;
 
 export default desktopSlice.reducer;

@@ -24,6 +24,10 @@
   }
 }
 
+.minimized {
+  display: none;
+}
+
 .controls {
   height: 100%;
   & > button {
