@@ -57,66 +57,102 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
     const element = ref.current;
     if (!element) return;
 
-    // Если normal — ставим позицию
+    // В normal режиме используем transform для позиции
     if (windowState === "normal") {
-      pos.current = { x: position.x, y: position.y };
       element.style.transform = `translate(${pos.current.x}px, ${pos.current.y}px)`;
     }
 
     // Инициализация interact
-    interact(element).draggable({
-      allowFrom: `.${cls.folderHeader}`,
-      enabled: windowState === "normal",
-      listeners: {
-        start() {
-          dispatch(setActiveFolder(item.id));
+    const interactInstance = interact(element)
+      .draggable({
+        allowFrom: `.${cls.folderHeader}`,
+        enabled: windowState === "normal",
+        listeners: {
+          start() {
+            dispatch(setActiveFolder(item.id));
 
-          const transform = element.style.transform.match(
-            /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/
-          );
-          if (transform) {
-            pos.current.x = parseFloat(transform[1]);
-            pos.current.y = parseFloat(transform[2]);
-          }
+            const transform = element.style.transform.match(
+              /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/
+            );
+            if (transform) {
+              pos.current.x = parseFloat(transform[1]);
+              pos.current.y = parseFloat(transform[2]);
+            }
+          },
+          move(event) {
+            if (windowState !== "normal") return;
+
+            pos.current.x += event.dx;
+            pos.current.y += event.dy;
+
+            const parent = element.parentElement!;
+            const parentRect = parent.getBoundingClientRect();
+
+            pos.current.x = Math.max(
+              0,
+              Math.min(pos.current.x, parentRect.width - element.offsetWidth)
+            );
+            pos.current.y = Math.max(
+              0,
+              Math.min(pos.current.y, parentRect.height - element.offsetHeight)
+            );
+
+            element.style.transform = `translate(${pos.current.x}px, ${pos.current.y}px)`;
+          },
+          end() {
+            if (windowState !== "normal") return;
+
+            dispatch(
+              moveFolder({
+                id: item.id,
+                x: pos.current.x,
+                y: pos.current.y,
+              })
+            );
+          },
         },
+      })
+      .resizable({
+        edges: { right: true, bottom: true },
+        invert: "none",
+        enabled: windowState === "normal",
+        listeners: {
+          move(event) {
+            if (windowState !== "normal") return;
 
-        move(event) {
-          if (windowState !== "normal") return;
+            const { width, height } = event.rect;
 
-          pos.current.x += event.dx;
-          pos.current.y += event.dy;
+            // применяем новые размеры
+            element.style.width = `${width}px`;
+            element.style.height = `${height}px`;
 
-          const parent = element.parentElement!;
-          const parentRect = parent.getBoundingClientRect();
-
-          pos.current.x = Math.max(
-            0,
-            Math.min(pos.current.x, parentRect.width - element.offsetWidth)
-          );
-          pos.current.y = Math.max(
-            0,
-            Math.min(pos.current.y, parentRect.height - element.offsetHeight)
-          );
-
-          element.style.transform = `translate(${pos.current.x}px, ${pos.current.y}px)`;
+            // корректируем позицию если тянем за верх/лево
+            pos.current.x += event.deltaRect.left;
+            pos.current.y += event.deltaRect.top;
+            element.style.transform = `translate(${pos.current.x}px, ${pos.current.y}px)`;
+          },
+          end() {
+            // Можно сохранять размеры в Redux при желании
+            dispatch(
+              moveFolder({
+                id: item.id,
+                x: pos.current.x,
+                y: pos.current.y,
+              })
+            );
+          },
         },
+        modifiers: [
+          interact.modifiers!.restrictSize({
+            min: { width: 300, height: 200 },
+          }),
+        ],
+      });
 
-        end() {
-          if (windowState !== "normal") return;
-
-          dispatch(
-            moveFolder({
-              id: item.id,
-              x: pos.current.x,
-              y: pos.current.y,
-            })
-          );
-        },
-      },
-    });
-
-    return () => interact(element).unset();
-  }, [dispatch, item.id, position.x, position.y, windowState]);
+    return () => {
+      interactInstance.unset();
+    };
+  }, [windowState, item.id, dispatch]);
 
   return (
     <div
