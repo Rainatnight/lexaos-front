@@ -126,13 +126,11 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
             element.style.width = `${width}px`;
             element.style.height = `${height}px`;
 
-            // корректируем позицию если тянем за верх/лево
             pos.current.x += event.deltaRect.left;
             pos.current.y += event.deltaRect.top;
             element.style.transform = `translate(${pos.current.x}px, ${pos.current.y}px)`;
           },
           end() {
-            // Можно сохранять размеры в Redux при желании
             dispatch(
               moveFolder({
                 id: item.id,
