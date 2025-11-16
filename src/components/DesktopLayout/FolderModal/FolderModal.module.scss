@@ -52,3 +52,16 @@
   min-height: 200px;
   color: red;
 }
+.maximized {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+
+  width: 100vw !important;
+  height: calc(100vh - 35px) !important;
+
+  transform: none !important;
+  margin: 0 !important;
+
+  border-radius: 0;
+}
