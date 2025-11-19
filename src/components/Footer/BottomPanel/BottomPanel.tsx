@@ -39,6 +39,10 @@ export const BottomPanel = () => {
                     windowState: "normal",
                   })
                 );
+                const closeSound = new Audio("/sounds/close.mp3");
+                closeSound.preload = "auto";
+                closeSound.currentTime = 0;
+                closeSound.play().catch((err) => console.log(err));
               }
 
               // Делаем активным в любом случае

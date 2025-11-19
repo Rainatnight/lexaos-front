@@ -38,10 +38,12 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
   const folderData = openFolders.find((f) => f.id === item.id);
   const isOpen = !!folderData;
 
-  // --- interact.js перетаскивание
   useEffect(() => {
     const element = ref.current;
     if (!element) return;
+
+    const dragEndSound = new Audio("/sounds/snap.mp3");
+    dragEndSound.preload = "auto";
 
     interact(element).draggable({
       listeners: {
@@ -68,6 +70,10 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
         },
         end() {
           element.classList.remove(cls.dragging);
+
+          dragEndSound.currentTime = 0; // на случай, если звук короткий и срабатывает быстро
+          dragEndSound.play().catch((err) => console.log(err));
+
           dispatch(
             moveItem({
               id: item.id,
@@ -107,6 +113,10 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
 
   const handleCloseWindow = () => {
     dispatch(closeFolder(item.id));
+    const closeSound = new Audio("/sounds/close.mp3");
+    closeSound.preload = "auto";
+    closeSound.currentTime = 0;
+    closeSound.play().catch((err) => console.log(err));
   };
 
   return (

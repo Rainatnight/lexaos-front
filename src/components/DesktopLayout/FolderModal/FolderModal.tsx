@@ -41,16 +41,23 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
       })
     );
   };
-
+  const playSound = () => {
+    const closeSound = new Audio("/sounds/close.mp3");
+    closeSound.preload = "auto";
+    closeSound.currentTime = 0;
+    closeSound.play().catch((err) => console.log(err));
+  };
   // === сворачивание ===
   const handleMinimize = () => {
     changeState("minimized");
     dispatch(setActiveFolder(null)); // убираем фокус
+    playSound();
   };
 
   // === разворачивание на весь экран ===
   const handleMaximize = () => {
     changeState(maximized ? "normal" : "maximized");
+    playSound();
   };
 
   useEffect(() => {
