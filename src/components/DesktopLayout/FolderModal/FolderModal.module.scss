@@ -7,7 +7,6 @@
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   overflow: hidden;
   z-index: 2;
-  border: 1px solid red;
 }
 
 .folderHeader {
@@ -80,4 +79,12 @@
 
 .folderWindow.maximized .folderContent {
   height: calc(100% - 35px);
+}
+
+.folderContent {
+  display: flex;
+}
+
+.itemsGrid {
+  display: flex;
 }

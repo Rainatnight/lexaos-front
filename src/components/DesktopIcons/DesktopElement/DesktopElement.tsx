@@ -5,13 +5,8 @@ import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
-import {
-  moveItemToFolder,
-  renameItem,
-  setRenamingItem,
-} from "@/store/slices/desktopSlice";
+import { renameItem, setRenamingItem } from "@/store/slices/desktopSlice";
 import { useState, useEffect, useRef } from "react";
-import interact from "interactjs";
 
 export const DesktopElement = ({
   name,

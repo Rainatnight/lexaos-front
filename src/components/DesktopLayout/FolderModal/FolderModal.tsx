@@ -11,6 +11,7 @@ import {
   setFolderWindowState,
 } from "@/store/slices/desktopSlice";
 import interact from "interactjs";
+import { DesktopElement } from "@/components/DesktopIcons";
 
 export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
   const dispatch = useDispatch();
@@ -224,20 +225,23 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
           <p className={cls.empty}>Папка пуста</p>
         ) : (
           <div className={cls.itemsGrid}>
-            {children.map((child) => (
-              <div key={child.id} className={cls.folderItem}>
-                {/* Можно использовать твой DesktopElement, если вынести стили */}
-                <img
-                  src={
-                    child.type === "folder"
-                      ? "/img/icons/folder.png"
-                      : "/img/icons/txt.png"
-                  }
-                  className={cls.icon}
+            {children.map((item) =>
+              item.type === "folder" ? (
+                <DesktopElement
+                  id={item.id}
+                  name={item.name || "Новая папка"}
+                  type="folder"
+                  key={item.id}
                 />
-                <span className={cls.name}>{child.name}</span>
-              </div>
-            ))}
+              ) : item.type === "txt" ? (
+                <DesktopElement
+                  id={item.id}
+                  name={item.name || "Документ"}
+                  type="txt"
+                  key={item.id}
+                />
+              ) : null
+            )}
           </div>
         )}
       </div>
