@@ -1,10 +1,17 @@
+"use client";
+
 import cls from "../DesktopIcons.module.scss";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
-import { renameItem, setRenamingItem } from "@/store/slices/desktopSlice";
+import {
+  moveItemToFolder,
+  renameItem,
+  setRenamingItem,
+} from "@/store/slices/desktopSlice";
 import { useState, useEffect, useRef } from "react";
+import interact from "interactjs";
 
 export const DesktopElement = ({
   name,
@@ -24,6 +31,8 @@ export const DesktopElement = ({
 
   const [tempName, setTempName] = useState(name);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const ref = useRef<HTMLDivElement>(null);
 
   const isRenaming = renamingItemId === id;
 
@@ -52,7 +61,11 @@ export const DesktopElement = ({
   };
 
   return (
-    <div className={cls.wrap} style={{ width: iconSize, height: iconSize }}>
+    <div
+      ref={ref}
+      className={cls.wrap}
+      style={{ width: iconSize, height: iconSize }}
+    >
       <Image
         src={type === "txt" ? "/img/icons/txt.png" : "/img/icons/folder.png"}
         alt={type === "txt" ? "txt" : "folder"}

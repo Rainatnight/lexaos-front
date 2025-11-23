@@ -10,6 +10,7 @@ export interface DesktopItem {
   x: number;
   y: number;
   component?: React.ReactNode;
+  parentId?: string | null;
 }
 
 export interface IOpenFolder {
@@ -197,6 +198,39 @@ export const desktopSlice = createSlice({
     setActiveFolder: (state, action) => {
       state.activeFolderId = action.payload;
     },
+
+    moveItemToFolder: (state, action) => {
+      const { itemId, folderId } = action.payload;
+
+      if (itemId === folderId) return; // Нельзя положить папку в саму себя
+
+      const item = state.items.find((i) => i.id === itemId);
+      const targetFolder = state.items.find((i) => i.id === folderId);
+
+      if (!item || !targetFolder) return;
+
+      // Нельзя положить папку в её дочерние папки
+      const isDescendant = (childId: string, parentId: string): boolean => {
+        const child = state.items.find((i) => i.id === childId);
+        if (!child || !child.parentId) return false;
+        if (child.parentId === parentId) return true;
+        return isDescendant(child.parentId, parentId);
+      };
+
+      if (item.type === "folder" && isDescendant(folderId, itemId)) {
+        return; // предотвращаем рекурсивный цикл
+      }
+
+      // СБРОС позиции — внутри папки будут свои координаты
+      item.x = 10;
+      item.y = 10;
+
+      // Перемещаем внутрь
+      item.parentId = folderId;
+
+      // Убираем выделение на рабочем столе
+      state.selectedItemId = null;
+    },
   },
 });
 
@@ -215,6 +249,7 @@ export const {
   setActiveFolder,
   moveFolder,
   setFolderWindowState,
+  moveItemToFolder,
 } = desktopSlice.actions;
 
 export default desktopSlice.reducer;

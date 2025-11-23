@@ -1,9 +1,12 @@
+"use client";
+
 import { useEffect, useRef } from "react";
 import cls from "./FolderModal.module.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import {
   moveFolder,
+  moveItemToFolder,
   setActiveFolder,
   setFolderWindowState,
 } from "@/store/slices/desktopSlice";
@@ -13,6 +16,8 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const pos = useRef({ x: position.x, y: position.y });
+  const allItems = useSelector((state: RootState) => state.desktop.items);
+  const children = allItems.filter((i) => i.parentId === item.id);
 
   const folderState = useSelector((state: RootState) =>
     state.desktop.openFolders.find((f) => f.id === item.id)
@@ -159,6 +164,35 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
     };
   }, [windowState, item.id, dispatch]);
 
+  useEffect(() => {
+    if (!ref.current) return;
+
+    const interactInstance = interact(ref.current).dropzone({
+      accept: ".draggableItem",
+      overlap: 0.4,
+      ondragenter() {
+        ref.current!.classList.add(cls.dropActive);
+      },
+      ondragleave() {
+        ref.current!.classList.remove(cls.dropActive);
+      },
+      ondrop(event) {
+        const draggedId = event.relatedTarget.dataset.id;
+        if (!draggedId) return;
+
+        dispatch(moveItemToFolder({ itemId: draggedId, folderId: item.id }));
+      },
+    });
+
+    return () => {
+      if (ref.current) interactInstance.unset();
+    };
+  }, [item.id, dispatch]);
+
+  const isDragging =
+    typeof window !== "undefined" &&
+    document.body.classList.contains("dragging");
+
   return (
     <div
       ref={ref}
@@ -170,6 +204,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
         top: 0,
         left: 0,
         zIndex: isActive ? 1000 : 999,
+        pointerEvents: isDragging ? "none" : "auto",
       }}
     >
       <div className={cls.folderHeader}>
@@ -185,7 +220,26 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
       </div>
 
       <div className={cls.folderContent}>
-        <p>Здесь будет содержимое папки</p>
+        {children.length === 0 ? (
+          <p className={cls.empty}>Папка пуста</p>
+        ) : (
+          <div className={cls.itemsGrid}>
+            {children.map((child) => (
+              <div key={child.id} className={cls.folderItem}>
+                {/* Можно использовать твой DesktopElement, если вынести стили */}
+                <img
+                  src={
+                    child.type === "folder"
+                      ? "/img/icons/folder.png"
+                      : "/img/icons/txt.png"
+                  }
+                  className={cls.icon}
+                />
+                <span className={cls.name}>{child.name}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

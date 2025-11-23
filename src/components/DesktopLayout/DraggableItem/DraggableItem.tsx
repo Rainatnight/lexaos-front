@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import interact from "interactjs";
@@ -20,6 +22,7 @@ interface IProps {
     x: number;
     y: number;
     component?: any;
+    parentId?: string | null;
   };
   onContextMenu?: (e: React.MouseEvent, itemId: string) => void;
 }
@@ -49,6 +52,7 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
       listeners: {
         start(event) {
           event.target.classList.add(cls.dragging);
+          document.body.classList.add("dragging");
         },
         move(event) {
           const x = currentPos.current.x + event.dx;
@@ -70,7 +74,7 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
         },
         end() {
           element.classList.remove(cls.dragging);
-
+          document.body.classList.remove("dragging");
           dragEndSound.currentTime = 0; // на случай, если звук короткий и срабатывает быстро
           dragEndSound.play().catch((err) => console.log(err));
 
@@ -119,13 +123,19 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
     closeSound.play().catch((err) => console.log(err));
   };
 
+  if (item.parentId) {
+    // Значит элемент лежит в папке — тут вообще НЕ должно быть drag на рабочий стол
+    return null; // компонент будет отрисован внутри FolderModal
+  }
+
   return (
     <>
       <div
         ref={ref}
+        data-id={item.id}
         onClick={handleClick}
         onDoubleClick={handleDoubleClick}
-        className={`${cls.draggableItem} ${
+        className={`${cls.draggableItem} draggableItem ${
           selectedItemId === item.id ? cls.selected : ""
         }`}
         onContextMenu={handleContextMenu}

@@ -14,3 +14,6 @@
   background-color: rgba(100, 150, 255, 0.3);
   box-shadow: 0 0 0 1px #4a90e2;
 }
+.dragging {
+  z-index: 9999 !important;
+}

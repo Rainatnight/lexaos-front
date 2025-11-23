@@ -13,7 +13,9 @@ interface Props {
 
 export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
   const dispatch = useDispatch();
-  const items = useSelector((state: RootState) => state.desktop.items);
+  const items = useSelector((state: RootState) =>
+    state.desktop.items.filter((i) => !i.parentId)
+  );
   const { user } = useSession();
 
   const [itemMenu, setItemMenu] = useState<{

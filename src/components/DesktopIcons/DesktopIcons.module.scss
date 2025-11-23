@@ -5,6 +5,9 @@
   align-items: center;
   text-align: center;
   cursor: pointer;
+  border: 1px solid blue;
+  position: relative;
+  z-index: 30;
 }
 
 .img {
