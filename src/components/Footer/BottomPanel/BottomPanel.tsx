@@ -49,7 +49,7 @@ export const BottomPanel = () => {
               dispatch(setActiveFolder(folder.id));
             }}
           >
-            {item.component ?? <span>{item.name}</span>}
+            {item.name ?? <span>{item.name}</span>}
           </div>
         );
       })}

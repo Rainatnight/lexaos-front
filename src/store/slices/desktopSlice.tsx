@@ -1,6 +1,4 @@
-import React from "react";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { PC, Vs, TrashBin } from "@/components/DesktopIcons";
 import { russianCompare } from "@/helpers/russianSort";
 
 export interface DesktopItem {
@@ -9,7 +7,6 @@ export interface DesktopItem {
   name: string;
   x: number;
   y: number;
-  component?: React.ReactNode;
   parentId?: string | null;
 }
 
@@ -36,7 +33,6 @@ const defaultIcons: DesktopItem[] = [
     name: "Этот компьютер",
     x: 0,
     y: 0,
-    component: <PC />,
   },
   {
     id: "vs",
@@ -44,7 +40,6 @@ const defaultIcons: DesktopItem[] = [
     name: "Visual Studio",
     x: 0,
     y: 80,
-    component: <Vs />,
   },
   {
     id: "trash",
@@ -52,7 +47,6 @@ const defaultIcons: DesktopItem[] = [
     name: "Корзина",
     x: 0,
     y: 160,
-    component: <TrashBin />,
   },
 ];
 
@@ -205,9 +199,11 @@ export const desktopSlice = createSlice({
       if (itemId === folderId) return; // Нельзя положить папку в саму себя
 
       const item = state.items.find((i) => i.id === itemId);
+
       const targetFolder = state.items.find((i) => i.id === folderId);
 
       if (!item || !targetFolder) return;
+      if (["vs", "pc", "trash"].includes(item.type)) return;
 
       // Нельзя положить папку в её дочерние папки
       const isDescendant = (childId: string, parentId: string): boolean => {

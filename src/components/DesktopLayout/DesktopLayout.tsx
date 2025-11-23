@@ -1,11 +1,11 @@
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState } from "@/store";
 import { DraggableItem } from "./DraggableItem/DraggableItem";
 import { setSelectedItem } from "@/store/slices/desktopSlice";
 import cls from "./DesktopLayout.module.scss";
 import { ItemContextMenu } from "./ItemContextMenu/ItemContextMenu";
 import useSession from "@/shared/hooks/useSession";
+import { selectRootDesktopItems } from "@/store/selectors";
 
 interface Props {
   onBackgroundContextMenu: (x: number, y: number) => void;
@@ -13,9 +13,8 @@ interface Props {
 
 export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
   const dispatch = useDispatch();
-  const items = useSelector((state: RootState) =>
-    state.desktop.items.filter((i) => !i.parentId)
-  );
+  const items = useSelector(selectRootDesktopItems);
+
   const { user } = useSession();
 
   const [itemMenu, setItemMenu] = useState<{

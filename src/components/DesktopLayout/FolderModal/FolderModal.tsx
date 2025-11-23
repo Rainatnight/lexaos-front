@@ -186,7 +186,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
     });
 
     return () => {
-      if (ref.current) interactInstance.unset();
+      interactInstance.unset();
     };
   }, [item.id, dispatch]);
 

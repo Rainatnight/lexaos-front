@@ -13,6 +13,7 @@ import { DesktopElement } from "@/components/DesktopIcons/DesktopElement/Desktop
 import { RootState } from "@/store";
 import cls from "./DraggableItem.module.scss";
 import { FolderModal } from "../FolderModal/FolderModal";
+import { PC, TrashBin, Vs } from "@/components/DesktopIcons";
 
 interface IProps {
   item: {
@@ -141,9 +142,9 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
         onContextMenu={handleContextMenu}
         style={{ transform: `translate(${item.x}px, ${item.y}px)` }}
       >
-        {item.type === "pc" && (item.component || <>PC</>)}
-        {item.type === "vs" && (item.component || <>VS</>)}
-        {item.type === "trash" && (item.component || <>Trash</>)}
+        {item.type === "pc" && <PC />}
+        {item.type === "vs" && <Vs />}
+        {item.type === "trash" && <TrashBin />}
         {item.type === "folder" && (
           <DesktopElement
             id={item.id}
