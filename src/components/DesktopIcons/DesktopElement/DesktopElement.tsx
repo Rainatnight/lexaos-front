@@ -57,6 +57,8 @@ export const DesktopElement = ({
 
   return (
     <div
+      id={`icon-${id}`}
+      data-id={id}
       ref={ref}
       className={cls.wrap}
       style={{ width: iconSize, height: iconSize }}

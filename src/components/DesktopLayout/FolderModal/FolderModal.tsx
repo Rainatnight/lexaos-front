@@ -181,7 +181,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
         const draggedId = event.relatedTarget.dataset.id;
         if (!draggedId) return;
 
-        dispatch(moveItemToFolder({ itemId: draggedId, folderId: item.id }));
+        dispatch(moveItemToFolder({ itemId: draggedId, parentId: item.id }));
       },
     });
 
@@ -189,6 +189,57 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
       interactInstance.unset();
     };
   }, [item.id, dispatch]);
+
+  useEffect(() => {
+    children.forEach((child) => {
+      const el = document.getElementById(`icon-${child.id}`);
+      if (!el) return;
+
+      // сбрасываем координаты
+      el.dataset.x = "0";
+      el.dataset.y = "0";
+
+      interact(el).draggable({
+        listeners: {
+          move(event) {
+            const currentX = parseFloat(el.dataset.x!) + event.dx;
+            const currentY = parseFloat(el.dataset.y!) + event.dy;
+
+            el.style.transform = `translate(${currentX}px, ${currentY}px)`;
+            el.style.zIndex = "100";
+            el.dataset.x = String(currentX);
+            el.dataset.y = String(currentY);
+          },
+          end(event) {
+            const folderRect = ref.current!.getBoundingClientRect();
+
+            const droppedOutside =
+              event.clientX < folderRect.left ||
+              event.clientX > folderRect.right ||
+              event.clientY < folderRect.top ||
+              event.clientY > folderRect.bottom;
+
+            if (droppedOutside) {
+              // вынос на рабочий стол
+              dispatch(
+                moveItemToFolder({
+                  itemId: child.id,
+                  parentId: null, // рабочий стол
+                  x: event.clientX - 50, // поправка, чтобы элемент не улетел
+                  y: event.clientY - 50,
+                })
+              );
+            } else {
+              // оставляем внутри папки
+              el.style.transform = `translate(10px, 10px)`;
+              el.dataset.x = "10";
+              el.dataset.y = "10";
+            }
+          },
+        },
+      });
+    });
+  }, [children, dispatch]);
 
   const isDragging =
     typeof window !== "undefined" &&

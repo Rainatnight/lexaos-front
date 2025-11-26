@@ -193,38 +193,46 @@ export const desktopSlice = createSlice({
       state.activeFolderId = action.payload;
     },
 
-    moveItemToFolder: (state, action) => {
-      const { itemId, folderId } = action.payload;
-
-      if (itemId === folderId) return; // Нельзя положить папку в саму себя
+    moveItemToFolder: (
+      state,
+      action: PayloadAction<{
+        itemId: string;
+        parentId: string | null; // null = рабочий стол
+        x?: number;
+        y?: number;
+      }>
+    ) => {
+      const { itemId, parentId, x, y } = action.payload;
 
       const item = state.items.find((i) => i.id === itemId);
+      if (!item) return;
 
-      const targetFolder = state.items.find((i) => i.id === folderId);
+      // Нельзя положить ПК, VS или корзину внутрь папки
+      if (parentId && ["vs", "pc", "trash"].includes(item.type)) return;
 
-      if (!item || !targetFolder) return;
-      if (["vs", "pc", "trash"].includes(item.type)) return;
-
-      // Нельзя положить папку в её дочерние папки
-      const isDescendant = (childId: string, parentId: string): boolean => {
-        const child = state.items.find((i) => i.id === childId);
-        if (!child || !child.parentId) return false;
-        if (child.parentId === parentId) return true;
-        return isDescendant(child.parentId, parentId);
-      };
-
-      if (item.type === "folder" && isDescendant(folderId, itemId)) {
-        return; // предотвращаем рекурсивный цикл
+      // Проверка на рекурсивное вложение (если перемещаем папку внутрь другой папки)
+      if (item.type === "folder" && parentId) {
+        const isDescendant = (
+          childId: string,
+          parentId: string | null
+        ): boolean => {
+          if (!parentId) return false;
+          const child = state.items.find((i) => i.id === childId);
+          if (!child?.parentId) return false;
+          if (child.parentId === parentId) return true;
+          return isDescendant(child.parentId, parentId);
+        };
+        if (isDescendant(parentId, itemId)) return;
       }
 
-      // СБРОС позиции — внутри папки будут свои координаты
-      item.x = 10;
-      item.y = 10;
+      // Сбрасываем координаты, если хотим новые
+      item.x = x ?? (parentId ? 10 : item.x); // внутри папки = 10, иначе оставляем прежнее
+      item.y = y ?? (parentId ? 10 : item.y);
 
-      // Перемещаем внутрь
-      item.parentId = folderId;
+      // Перемещаем элемент
+      item.parentId = parentId;
 
-      // Убираем выделение на рабочем столе
+      // Сброс выделения
       state.selectedItemId = null;
     },
   },
