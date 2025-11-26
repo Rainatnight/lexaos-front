@@ -185,61 +185,85 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
       },
     });
 
-    return () => {
-      interactInstance.unset();
-    };
-  }, [item.id, dispatch]);
+    return () => interactInstance.unset();
+  }, [item.id, dispatch, windowState]);
 
   useEffect(() => {
     children.forEach((child) => {
       const el = document.getElementById(`icon-${child.id}`);
       if (!el) return;
 
-      // сбрасываем координаты
-      el.dataset.x = "0";
-      el.dataset.y = "0";
+      let startX = 0;
+      let startY = 0;
 
       interact(el).draggable({
         listeners: {
-          move(event) {
-            const currentX = parseFloat(el.dataset.x!) + event.dx;
-            const currentY = parseFloat(el.dataset.y!) + event.dy;
+          start(event) {
+            // создаём клон
+            const clone = el.cloneNode(true) as HTMLElement;
+            clone.id = `drag-clone-${child.id}`;
+            clone.style.position = "fixed";
+            clone.style.left = `${el.getBoundingClientRect().left}px`;
+            clone.style.top = `${el.getBoundingClientRect().top}px`;
+            clone.style.zIndex = "10000";
+            clone.style.pointerEvents = "none";
+            clone.style.width = `${el.offsetWidth}px`;
+            clone.style.height = `${el.offsetHeight}px`;
 
-            el.style.transform = `translate(${currentX}px, ${currentY}px)`;
-            el.style.zIndex = "100";
-            el.dataset.x = String(currentX);
-            el.dataset.y = String(currentY);
+            document.body.appendChild(clone);
+            el.dataset.cloneId = clone.id;
+
+            // скрываем оригинал
+            el.style.visibility = "hidden";
+          },
+          move(event) {
+            const clone = document.getElementById(el.dataset.cloneId!);
+            if (!clone) return;
+
+            const dx = event.dx;
+            const dy = event.dy;
+
+            const transform = clone.style.transform.match(
+              /translate\(([-\d.]+)px,\s*([-\d.]+)px\)/
+            );
+            let x = 0,
+              y = 0;
+            if (transform) {
+              x = parseFloat(transform[1]);
+              y = parseFloat(transform[2]);
+            }
+            x += dx;
+            y += dy;
+
+            clone.style.transform = `translate(${x}px, ${y}px)`;
           },
           end(event) {
-            const folderRect = ref.current!.getBoundingClientRect();
+            const clone = document.getElementById(el.dataset.cloneId!);
+            if (clone) clone.remove(); // удаляем клон
 
+            const folderRect = ref.current!.getBoundingClientRect();
             const droppedOutside =
               event.clientX < folderRect.left ||
               event.clientX > folderRect.right ||
               event.clientY < folderRect.top ||
               event.clientY > folderRect.bottom;
 
-            if (droppedOutside) {
-              // вынос на рабочий стол
-              dispatch(
-                moveItemToFolder({
-                  itemId: child.id,
-                  parentId: null, // рабочий стол
-                  x: event.clientX - 50, // поправка, чтобы элемент не улетел
-                  y: event.clientY - 50,
-                })
-              );
-            } else {
-              // оставляем внутри папки
-              el.style.transform = `translate(10px, 10px)`;
-              el.dataset.x = "10";
-              el.dataset.y = "10";
-            }
+            dispatch(
+              moveItemToFolder({
+                itemId: child.id,
+                parentId: droppedOutside ? null : item.id,
+                x: droppedOutside ? event.clientX - 50 : 10,
+                y: droppedOutside ? event.clientY - 50 : 10,
+              })
+            );
+
+            // показываем оригинал
+            el.style.visibility = "visible";
           },
         },
       });
     });
-  }, [children, dispatch]);
+  }, [children, dispatch, item.id]);
 
   const isDragging =
     typeof window !== "undefined" &&
