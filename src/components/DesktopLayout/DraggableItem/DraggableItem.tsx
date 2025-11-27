@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import interact from "interactjs";
 import {
@@ -12,7 +12,6 @@ import { DesktopElement } from "@/components/DesktopIcons/DesktopElement/Desktop
 import { RootState } from "@/store";
 import cls from "./DraggableItem.module.scss";
 import { PC, TrashBin, Vs } from "@/components/DesktopIcons";
-import { ItemContextMenu } from "../ItemContextMenu/ItemContextMenu";
 
 interface IProps {
   item: {
@@ -33,12 +32,6 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
   const selectedItemId = useSelector(
     (state: RootState) => state.desktop.selectedItemId
   );
-
-  const [itemMenu, setItemMenu] = useState<{
-    x: number;
-    y: number;
-    itemId: string;
-  } | null>(null);
 
   useEffect(() => {
     const element = ref.current;
@@ -96,27 +89,6 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
     dispatch(setSelectedItem(item.id));
   };
 
-  const handleContextMenu = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setItemMenu({ x: e.clientX, y: e.clientY, itemId: item.id });
-    dispatch(setSelectedItem(item.id));
-  };
-
-  // --- двойной клик открывает окно
-  const handleDoubleClick = (e: React.MouseEvent) => {
-    if (item.type === "folder") {
-      dispatch(
-        openFolder({
-          id: item.id,
-          x: e.clientX,
-          y: e.clientY,
-        })
-      );
-    }
-  };
-
   useEffect(() => {
     if (ref.current) {
       ref.current.style.transform = `translate(${item.x}px, ${item.y}px)`;
@@ -135,11 +107,9 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
         ref={ref}
         data-id={item.id}
         onClick={handleClick}
-        onDoubleClick={handleDoubleClick}
         className={`${cls.draggableItem} draggableItem ${
           selectedItemId === item.id ? cls.selected : ""
         }`}
-        onContextMenu={handleContextMenu}
         style={{ transform: `translate(${item.x}px, ${item.y}px)` }}
       >
         {item.type === "pc" && <PC />}
@@ -157,14 +127,6 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
             name={item.name || "Документ"}
             id={item.id}
             type="txt"
-          />
-        )}
-        {itemMenu && (
-          <ItemContextMenu
-            x={itemMenu.x}
-            y={itemMenu.y}
-            itemId={itemMenu.itemId}
-            onClose={() => setItemMenu(null)}
           />
         )}
       </div>

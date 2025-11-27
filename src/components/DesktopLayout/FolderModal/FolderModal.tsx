@@ -9,12 +9,9 @@ import {
   moveItemToFolder,
   setActiveFolder,
   setFolderWindowState,
-  setSelectedItem,
 } from "@/store/slices/desktopSlice";
 import interact from "interactjs";
 import { DesktopElement } from "@/components/DesktopIcons";
-import { DraggableItem } from "../DraggableItem/DraggableItem";
-import { ItemContextMenu } from "../ItemContextMenu/ItemContextMenu";
 
 export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
   const dispatch = useDispatch();

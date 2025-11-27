@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
 import {
+  openFolder,
   renameItem,
   setRenamingItem,
   setSelectedItem,
@@ -74,6 +75,19 @@ export const DesktopElement = ({
     dispatch(setSelectedItem(id));
   };
 
+  // --- двойной клик открывает окно
+  const handleDoubleClick = (e: React.MouseEvent) => {
+    if (type === "folder") {
+      dispatch(
+        openFolder({
+          id,
+          x: e.clientX,
+          y: e.clientY,
+        })
+      );
+    }
+  };
+
   return (
     <div
       id={`icon-${id}`}
@@ -83,6 +97,9 @@ export const DesktopElement = ({
       style={{ width: iconSize, height: iconSize }}
       onContextMenu={(e) => {
         handleContextMenu(e, id);
+      }}
+      onDoubleClick={(e) => {
+        handleDoubleClick(e);
       }}
     >
       <Image

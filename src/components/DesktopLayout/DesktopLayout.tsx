@@ -7,6 +7,7 @@ import { ItemContextMenu } from "./ItemContextMenu/ItemContextMenu";
 import useSession from "@/shared/hooks/useSession";
 import { openedWindows, selectRootDesktopItems } from "@/store/selectors";
 import { FolderModal } from "./FolderModal/FolderModal";
+import { RootState } from "@/store";
 
 interface Props {
   onBackgroundContextMenu: (x: number, y: number) => void;
@@ -16,6 +17,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
   const dispatch = useDispatch();
   const items = useSelector(selectRootDesktopItems);
   const openFolders = useSelector(openedWindows);
+  const allItems = useSelector((state: RootState) => state.desktop.items);
 
   const { user } = useSession();
 
@@ -96,7 +98,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     closeSound.currentTime = 0;
     closeSound.play().catch((err) => console.log(err));
   };
-
+  console.log(openFolders);
   return (
     <div
       className={cls.desktopWrapper}
@@ -124,14 +126,18 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
       )}
 
       {/*   открытые папки */}
-      {openFolders.map((folder) => (
-        <FolderModal
-          key={folder.id}
-          item={items.find((i) => i.id === folder.id)}
-          position={{ x: folder.x, y: folder.y }}
-          handleCloseWindow={() => handleCloseWindow(folder.id)}
-        />
-      ))}
+      {openFolders.map((folder) => {
+        const folderItem = allItems.find((i) => i.id === folder.id);
+        if (!folderItem) return null;
+        return (
+          <FolderModal
+            key={folder.id}
+            item={folderItem}
+            handleCloseWindow={() => dispatch(closeFolder(folder.id))}
+            position={{ x: folder.x, y: folder.y }}
+          />
+        );
+      })}
     </div>
   );
 };
