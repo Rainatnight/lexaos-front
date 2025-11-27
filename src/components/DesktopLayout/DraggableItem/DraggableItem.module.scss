@@ -4,6 +4,8 @@
   transition: background-color 0.15s ease;
   border-radius: 4px;
   padding: 0px;
+  z-index: 1000;
+  border: 1px solid blue;
 }
 
 .dragging {
@@ -15,5 +17,5 @@
   box-shadow: 0 0 0 1px #4a90e2;
 }
 .dragging {
-  z-index: 9999 !important;
+  z-index: 99 !important;
 }

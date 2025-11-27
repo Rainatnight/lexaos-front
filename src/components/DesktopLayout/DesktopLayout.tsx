@@ -19,12 +19,6 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
 
   const { user } = useSession();
 
-  const [itemMenu, setItemMenu] = useState<{
-    x: number;
-    y: number;
-    itemId: string;
-  } | null>(null);
-
   // 👇 состояние для рамки выделения
   const [selecting, setSelecting] = useState(false);
   const [selectionRect, setSelectionRect] = useState<{
@@ -40,7 +34,6 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
       e.preventDefault();
       e.stopPropagation();
       dispatch(setSelectedItem(null));
-      setItemMenu(null);
       onBackgroundContextMenu(e.clientX, e.clientY);
     }
   };
@@ -51,7 +44,6 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     if (e.button !== 0 || e.target !== e.currentTarget) return;
 
     dispatch(setSelectedItem(null));
-    setItemMenu(null);
 
     startPos.current = { x: e.clientX, y: e.clientY };
     setSelecting(true);
@@ -115,25 +107,9 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     >
       <h1>{user?.login}</h1>
       {items.map((item) => (
-        <DraggableItem
-          key={item.id}
-          item={item}
-          onContextMenu={(e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            setItemMenu({ x: e.clientX, y: e.clientY, itemId: item.id });
-            dispatch(setSelectedItem(item.id));
-          }}
-        />
+        <DraggableItem key={item.id} item={item} />
       ))}
-      {itemMenu && (
-        <ItemContextMenu
-          x={itemMenu.x}
-          y={itemMenu.y}
-          itemId={itemMenu.itemId}
-          onClose={() => setItemMenu(null)}
-        />
-      )}
+
       {/* сама рамка */}
       {selectionRect && (
         <div
@@ -146,7 +122,8 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
           }}
         />
       )}
-      // открытые папки
+
+      {/*   открытые папки */}
       {openFolders.map((folder) => (
         <FolderModal
           key={folder.id}

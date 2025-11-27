@@ -6,7 +6,8 @@
   border: 1px solid black;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   overflow: hidden;
-  z-index: 2;
+  z-index: 1;
+  border: 1px solid red;
 }
 
 .folderHeader {
@@ -87,4 +88,7 @@
 
 .itemsGrid {
   display: flex;
+  position: relative;
+  border: 1px solid green;
+  width: 20px;
 }

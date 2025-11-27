@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import interact from "interactjs";
 import {
@@ -12,6 +12,7 @@ import { DesktopElement } from "@/components/DesktopIcons/DesktopElement/Desktop
 import { RootState } from "@/store";
 import cls from "./DraggableItem.module.scss";
 import { PC, TrashBin, Vs } from "@/components/DesktopIcons";
+import { ItemContextMenu } from "../ItemContextMenu/ItemContextMenu";
 
 interface IProps {
   item: {
@@ -23,22 +24,21 @@ interface IProps {
     component?: any;
     parentId?: string | null;
   };
-  onContextMenu?: (e: React.MouseEvent, itemId: string) => void;
 }
 
-export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
+export const DraggableItem = React.memo(({ item }: IProps) => {
   const dispatch = useDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const currentPos = useRef({ x: item.x, y: item.y });
   const selectedItemId = useSelector(
     (state: RootState) => state.desktop.selectedItemId
   );
-  const openFolders = useSelector(
-    (state: RootState) => state.desktop.openFolders
-  );
 
-  const folderData = openFolders.find((f) => f.id === item.id);
-  const isOpen = !!folderData;
+  const [itemMenu, setItemMenu] = useState<{
+    x: number;
+    y: number;
+    itemId: string;
+  } | null>(null);
 
   useEffect(() => {
     const element = ref.current;
@@ -98,7 +98,10 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
 
   const handleContextMenu = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (onContextMenu) onContextMenu(e, item.id);
+    e.stopPropagation();
+
+    setItemMenu({ x: e.clientX, y: e.clientY, itemId: item.id });
+    dispatch(setSelectedItem(item.id));
   };
 
   // --- двойной клик открывает окно
@@ -113,6 +116,13 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
       );
     }
   };
+
+  useEffect(() => {
+    if (ref.current) {
+      ref.current.style.transform = `translate(${item.x}px, ${item.y}px)`;
+      currentPos.current = { x: item.x, y: item.y };
+    }
+  }, []);
 
   if (item.parentId) {
     // Значит элемент лежит в папке — тут вообще НЕ должно быть drag на рабочий стол
@@ -147,6 +157,14 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
             name={item.name || "Документ"}
             id={item.id}
             type="txt"
+          />
+        )}
+        {itemMenu && (
+          <ItemContextMenu
+            x={itemMenu.x}
+            y={itemMenu.y}
+            itemId={itemMenu.itemId}
+            onClose={() => setItemMenu(null)}
           />
         )}
       </div>

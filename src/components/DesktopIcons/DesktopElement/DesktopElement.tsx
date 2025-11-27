@@ -5,8 +5,13 @@ import { useTranslation } from "react-i18next";
 import Image from "next/image";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
-import { renameItem, setRenamingItem } from "@/store/slices/desktopSlice";
+import {
+  renameItem,
+  setRenamingItem,
+  setSelectedItem,
+} from "@/store/slices/desktopSlice";
 import { useState, useEffect, useRef } from "react";
+import { ItemContextMenu } from "@/components/DesktopLayout/ItemContextMenu/ItemContextMenu";
 
 export const DesktopElement = ({
   name,
@@ -23,6 +28,12 @@ export const DesktopElement = ({
   const renamingItemId = useSelector(
     (state: RootState) => state.desktop.renamingItemId
   );
+
+  const [itemMenu, setItemMenu] = useState<{
+    x: number;
+    y: number;
+    itemId: string;
+  } | null>(null);
 
   const [tempName, setTempName] = useState(name);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -55,6 +66,14 @@ export const DesktopElement = ({
     }
   };
 
+  const handleContextMenu = (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setItemMenu({ x: e.clientX, y: e.clientY, itemId: id });
+    dispatch(setSelectedItem(id));
+  };
+
   return (
     <div
       id={`icon-${id}`}
@@ -62,6 +81,9 @@ export const DesktopElement = ({
       ref={ref}
       className={cls.wrap}
       style={{ width: iconSize, height: iconSize }}
+      onContextMenu={(e) => {
+        handleContextMenu(e, id);
+      }}
     >
       <Image
         src={type === "txt" ? "/img/icons/txt.png" : "/img/icons/folder.png"}
@@ -82,6 +104,15 @@ export const DesktopElement = ({
         />
       ) : (
         <p className={cls.title}>{name || t("Новая папка")}</p>
+      )}
+
+      {itemMenu && (
+        <ItemContextMenu
+          x={itemMenu.x}
+          y={itemMenu.y}
+          itemId={itemMenu.itemId}
+          onClose={() => setItemMenu(null)}
+        />
       )}
     </div>
   );

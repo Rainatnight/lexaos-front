@@ -94,7 +94,12 @@ export const ItemContextMenu: React.FC<Props> = ({ x, y, itemId, onClose }) => {
     <ul
       ref={ref}
       className={cls.contextMenu}
-      style={{ top: pos.top, left: pos.left }}
+      style={{
+        top: `${pos.top}`,
+        left: `${pos.left}`,
+        position: "absolute",
+        zIndex: 10,
+      }}
     >
       {options.map((opt, i) => (
         <li key={i} className={cls.menuItem} onClick={opt.action}>

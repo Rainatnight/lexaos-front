@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import cls from "./FolderModal.module.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
@@ -9,9 +9,12 @@ import {
   moveItemToFolder,
   setActiveFolder,
   setFolderWindowState,
+  setSelectedItem,
 } from "@/store/slices/desktopSlice";
 import interact from "interactjs";
 import { DesktopElement } from "@/components/DesktopIcons";
+import { DraggableItem } from "../DraggableItem/DraggableItem";
+import { ItemContextMenu } from "../ItemContextMenu/ItemContextMenu";
 
 export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
   const dispatch = useDispatch();
@@ -297,23 +300,24 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
           <p className={cls.empty}>Папка пуста</p>
         ) : (
           <div className={cls.itemsGrid}>
-            {children.map((item) =>
-              item.type === "folder" ? (
-                <DesktopElement
-                  id={item.id}
-                  name={item.name || "Новая папка"}
-                  type="folder"
-                  key={item.id}
-                />
-              ) : item.type === "txt" ? (
-                <DesktopElement
-                  id={item.id}
-                  name={item.name || "Документ"}
-                  type="txt"
-                  key={item.id}
-                />
-              ) : null
-            )}
+            {children.map((el) => (
+              <div>
+                {el.type === "folder" && (
+                  <DesktopElement
+                    id={el.id}
+                    name={el.name || "Новая папка"}
+                    type="folder"
+                  />
+                )}
+                {el.type === "txt" && (
+                  <DesktopElement
+                    id={el.id}
+                    name={el.name || "Новая папка"}
+                    type="txt"
+                  />
+                )}
+              </div>
+            ))}
           </div>
         )}
       </div>

@@ -1,11 +1,10 @@
 .contextMenu {
-  position: fixed;
+  position: absolute;
   background: var(--modal-color);
   color: #fff;
   padding: 2px 0;
   width: 250px;
   list-style: none;
-  z-index: 1000;
   font-size: 12px;
   border: 1px solid var(--modal-border);
   li {
@@ -17,4 +16,7 @@
       background: #666;
     }
   }
+  z-index: 4;
+
+  border: 1px solid green;
 }
