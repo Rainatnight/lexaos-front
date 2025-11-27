@@ -193,9 +193,6 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
       const el = document.getElementById(`icon-${child.id}`);
       if (!el) return;
 
-      let startX = 0;
-      let startY = 0;
-
       interact(el).draggable({
         listeners: {
           start(event) {

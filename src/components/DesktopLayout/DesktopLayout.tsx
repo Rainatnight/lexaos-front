@@ -1,11 +1,12 @@
 import React, { useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { DraggableItem } from "./DraggableItem/DraggableItem";
-import { setSelectedItem } from "@/store/slices/desktopSlice";
+import { closeFolder, setSelectedItem } from "@/store/slices/desktopSlice";
 import cls from "./DesktopLayout.module.scss";
 import { ItemContextMenu } from "./ItemContextMenu/ItemContextMenu";
 import useSession from "@/shared/hooks/useSession";
-import { selectRootDesktopItems } from "@/store/selectors";
+import { openedWindows, selectRootDesktopItems } from "@/store/selectors";
+import { FolderModal } from "./FolderModal/FolderModal";
 
 interface Props {
   onBackgroundContextMenu: (x: number, y: number) => void;
@@ -14,6 +15,7 @@ interface Props {
 export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
   const dispatch = useDispatch();
   const items = useSelector(selectRootDesktopItems);
+  const openFolders = useSelector(openedWindows);
 
   const { user } = useSession();
 
@@ -95,6 +97,14 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     setSelectionRect(null);
   };
 
+  const handleCloseWindow = (id: string) => {
+    dispatch(closeFolder(id));
+    const closeSound = new Audio("/sounds/close.mp3");
+    closeSound.preload = "auto";
+    closeSound.currentTime = 0;
+    closeSound.play().catch((err) => console.log(err));
+  };
+
   return (
     <div
       className={cls.desktopWrapper}
@@ -104,7 +114,6 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
       onMouseUp={handleMouseUp}
     >
       <h1>{user?.login}</h1>
-
       {items.map((item) => (
         <DraggableItem
           key={item.id}
@@ -117,7 +126,6 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
           }}
         />
       ))}
-
       {itemMenu && (
         <ItemContextMenu
           x={itemMenu.x}
@@ -126,8 +134,7 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
           onClose={() => setItemMenu(null)}
         />
       )}
-
-      {/* 👇 сама рамка */}
+      {/* сама рамка */}
       {selectionRect && (
         <div
           className={cls.selection}
@@ -139,6 +146,15 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
           }}
         />
       )}
+      // открытые папки
+      {openFolders.map((folder) => (
+        <FolderModal
+          key={folder.id}
+          item={items.find((i) => i.id === folder.id)}
+          position={{ x: folder.x, y: folder.y }}
+          handleCloseWindow={() => handleCloseWindow(folder.id)}
+        />
+      ))}
     </div>
   );
 };

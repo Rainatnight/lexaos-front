@@ -4,7 +4,6 @@ import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import interact from "interactjs";
 import {
-  closeFolder,
   moveItem,
   openFolder,
   setSelectedItem,
@@ -12,7 +11,6 @@ import {
 import { DesktopElement } from "@/components/DesktopIcons/DesktopElement/DesktopElement";
 import { RootState } from "@/store";
 import cls from "./DraggableItem.module.scss";
-import { FolderModal } from "../FolderModal/FolderModal";
 import { PC, TrashBin, Vs } from "@/components/DesktopIcons";
 
 interface IProps {
@@ -116,14 +114,6 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
     }
   };
 
-  const handleCloseWindow = () => {
-    dispatch(closeFolder(item.id));
-    const closeSound = new Audio("/sounds/close.mp3");
-    closeSound.preload = "auto";
-    closeSound.currentTime = 0;
-    closeSound.play().catch((err) => console.log(err));
-  };
-
   if (item.parentId) {
     // Значит элемент лежит в папке — тут вообще НЕ должно быть drag на рабочий стол
     return null; // компонент будет отрисован внутри FolderModal
@@ -160,15 +150,6 @@ export const DraggableItem = React.memo(({ item, onContextMenu }: IProps) => {
           />
         )}
       </div>
-
-      {/* === окно папки === */}
-      {isOpen && item.type === "folder" && (
-        <FolderModal
-          item={item}
-          handleCloseWindow={handleCloseWindow}
-          position={{ x: folderData!.x, y: folderData!.y }}
-        />
-      )}
     </>
   );
 });
