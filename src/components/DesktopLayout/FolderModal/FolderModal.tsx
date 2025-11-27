@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import cls from "./FolderModal.module.scss";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
@@ -195,7 +195,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
 
       interact(el).draggable({
         listeners: {
-          start(event) {
+          start() {
             // создаём клон
             const clone = el.cloneNode(true) as HTMLElement;
             clone.id = `drag-clone-${child.id}`;
@@ -298,7 +298,7 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
         ) : (
           <div className={cls.itemsGrid}>
             {children.map((el) => (
-              <div>
+              <div key={el.id}>
                 {el.type === "folder" && (
                   <DesktopElement
                     id={el.id}

@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { DraggableItem } from "./DraggableItem/DraggableItem";
 import { closeFolder, setSelectedItem } from "@/store/slices/desktopSlice";
 import cls from "./DesktopLayout.module.scss";
-import { ItemContextMenu } from "./ItemContextMenu/ItemContextMenu";
 import useSession from "@/shared/hooks/useSession";
 import { openedWindows, selectRootDesktopItems } from "@/store/selectors";
 import { FolderModal } from "./FolderModal/FolderModal";
@@ -91,14 +90,6 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
     setSelectionRect(null);
   };
 
-  const handleCloseWindow = (id: string) => {
-    dispatch(closeFolder(id));
-    const closeSound = new Audio("/sounds/close.mp3");
-    closeSound.preload = "auto";
-    closeSound.currentTime = 0;
-    closeSound.play().catch((err) => console.log(err));
-  };
-  console.log(openFolders);
   return (
     <div
       className={cls.desktopWrapper}

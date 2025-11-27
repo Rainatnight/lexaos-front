@@ -3,11 +3,7 @@
 import React, { useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import interact from "interactjs";
-import {
-  moveItem,
-  openFolder,
-  setSelectedItem,
-} from "@/store/slices/desktopSlice";
+import { moveItem, setSelectedItem } from "@/store/slices/desktopSlice";
 import { DesktopElement } from "@/components/DesktopIcons/DesktopElement/DesktopElement";
 import { RootState } from "@/store";
 import cls from "./DraggableItem.module.scss";
@@ -94,7 +90,7 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
       ref.current.style.transform = `translate(${item.x}px, ${item.y}px)`;
       currentPos.current = { x: item.x, y: item.y };
     }
-  }, []);
+  }, [item.x, item.y]);
 
   if (item.parentId) {
     // Значит элемент лежит в папке — тут вообще НЕ должно быть drag на рабочий стол
