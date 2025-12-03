@@ -11,6 +11,8 @@ import {
 } from "@/store/slices/desktopSlice";
 import { nanoid } from "nanoid";
 import { RootState } from "@/store";
+import { createFolderThunk } from "@/store/slices/desktopThunks";
+import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 
 interface ContextMenuProps {
   x: number;
@@ -31,7 +33,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
   const menuRef = useRef<HTMLUListElement>(null);
   const [position, setPosition] = useState({ top: y, left: x });
   const { t } = useTranslation("contextMenu");
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const items = useSelector((state: RootState) => state.desktop.items);
   const iconSize = useSelector((state: RootState) => state.desktop.iconSize);
   const backgroundValue = useSelector(
@@ -76,12 +78,11 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
         }
 
         dispatch(
-          addItem({
-            id: nanoid(),
-            type: "folder",
-            name: t("Новая папка"),
-            x: newX,
-            y: newY,
+          createFolderThunk({
+            name: "Новая папка",
+            x: 100,
+            y: 100,
+            parentId: null,
           })
         );
 

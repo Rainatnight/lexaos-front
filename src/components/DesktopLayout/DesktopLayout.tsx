@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { DraggableItem } from "./DraggableItem/DraggableItem";
 import { closeFolder, setSelectedItem } from "@/store/slices/desktopSlice";
@@ -7,13 +7,16 @@ import useSession from "@/shared/hooks/useSession";
 import { openedWindows, selectRootDesktopItems } from "@/store/selectors";
 import { FolderModal } from "./FolderModal/FolderModal";
 import { RootState } from "@/store";
+import { api } from "@/shared/api/api";
+import { loadDesktopThunk } from "@/store/slices/desktopThunks";
+import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 
 interface Props {
   onBackgroundContextMenu: (x: number, y: number) => void;
 }
 
 export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const items = useSelector(selectRootDesktopItems);
   const openFolders = useSelector(openedWindows);
   const allItems = useSelector((state: RootState) => state.desktop.items);
@@ -89,6 +92,11 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
 
     setSelectionRect(null);
   };
+
+  useEffect(() => {
+    dispatch(loadDesktopThunk());
+    console.log(allItems);
+  }, [dispatch]);
 
   return (
     <div
