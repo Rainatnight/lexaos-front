@@ -23,6 +23,8 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
 
   const { user } = useSession();
 
+  const loaded = useRef(false);
+
   // 👇 состояние для рамки выделения
   const [selecting, setSelecting] = useState(false);
   const [selectionRect, setSelectionRect] = useState<{
@@ -94,8 +96,10 @@ export const DesktopLayout: React.FC<Props> = ({ onBackgroundContextMenu }) => {
   };
 
   useEffect(() => {
-    dispatch(loadDesktopThunk());
-    console.log(allItems);
+    if (!loaded.current) {
+      loaded.current = true;
+      dispatch(loadDesktopThunk());
+    }
   }, [dispatch]);
 
   return (

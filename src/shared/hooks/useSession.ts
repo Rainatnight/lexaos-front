@@ -91,9 +91,9 @@ const useSession = (): Session => {
         localStorage.removeItem(USER_KEY);
         localStorage.removeItem(EXPIRES_TOKEN_KEY);
 
-        if (state.isAuthorized) {
-          window.location.href = "/";
-        }
+        // if (state.isAuthorized) {
+        //   window.location.href = "/";
+        // }
       },
       setUser: (user: any) => {
         dispatch({

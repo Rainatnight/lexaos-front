@@ -1,6 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { addItem, DesktopItem, setItems } from "./desktopSlice";
 import { api } from "@/shared/api/api";
+import { RootState } from "..";
 
 export const createFolderThunk = createAsyncThunk(
   "desktop/createFolder",
@@ -35,14 +36,19 @@ export const createFolderThunk = createAsyncThunk(
 // Загружает все элементы рабочего стола пользователя
 export const loadDesktopThunk = createAsyncThunk(
   "desktop/loadDesktop",
-  async (_, { dispatch, rejectWithValue }) => {
+  async (_, { dispatch, getState, rejectWithValue }) => {
     try {
       const res = await api.get("/folders/find");
       const userItems: DesktopItem[] = res.data;
-      console.log(userItems.length);
-      // пушим каждый элемент в Redux
+
+      const state = getState() as RootState;
+      const existingItems = state.desktop.items;
+
       userItems.forEach((item) => {
-        dispatch(addItem(item));
+        const exists = existingItems.some((i) => i.id === item.id);
+        if (!exists) {
+          dispatch(addItem(item));
+        }
       });
 
       return userItems;

@@ -79,9 +79,9 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({ x, y, onClose }) => {
 
         dispatch(
           createFolderThunk({
-            name: "Новая папка",
-            x: 100,
-            y: 100,
+            name: `Новая папка ${items.length - 2}`,
+            x: newX,
+            y: newY,
             parentId: null,
           })
         );
