@@ -7,12 +7,13 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
 import {
   openFolder,
-  renameItem,
   setRenamingItem,
   setSelectedItem,
 } from "@/store/slices/desktopSlice";
 import { useState, useEffect, useRef } from "react";
 import { ItemContextMenu } from "@/components/DesktopLayout/ItemContextMenu/ItemContextMenu";
+import { renameFolderThunk } from "@/store/slices/desktopThunks";
+import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 
 export const DesktopElement = ({
   name,
@@ -24,7 +25,7 @@ export const DesktopElement = ({
   type: "folder" | "txt";
 }) => {
   const { t } = useTranslation("desktopLayout");
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const iconSize = useSelector((state: RootState) => state.desktop.iconSize);
   const renamingItemId = useSelector(
     (state: RootState) => state.desktop.renamingItemId
@@ -53,15 +54,20 @@ export const DesktopElement = ({
   const handleBlur = () => {
     const newName = tempName.trim();
     if (newName && newName !== name) {
-      dispatch(renameItem({ id, newName }));
-    } else {
-      dispatch(setRenamingItem(null));
+      dispatch(renameFolderThunk({ id, newName }));
     }
+    dispatch(setRenamingItem(null));
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
-      e.currentTarget.blur();
+      e.preventDefault();
+
+      const newName = tempName.trim();
+      if (newName && newName !== name) {
+        dispatch(renameFolderThunk({ id, newName }));
+      }
+      dispatch(setRenamingItem(null));
     } else if (e.key === "Escape") {
       dispatch(setRenamingItem(null));
     }
@@ -71,7 +77,7 @@ export const DesktopElement = ({
     e.preventDefault();
     e.stopPropagation();
 
-    setItemMenu({ x: e.clientX, y: e.clientY, itemId: id });
+    setItemMenu({ x: 0, y: 0, itemId: id });
     dispatch(setSelectedItem(id));
   };
 
@@ -87,6 +93,10 @@ export const DesktopElement = ({
       );
     }
   };
+
+  useEffect(() => {
+    setTempName(name);
+  }, [name]);
 
   return (
     <div

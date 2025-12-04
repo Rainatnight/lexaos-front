@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { addItem, DesktopItem, setItems } from "./desktopSlice";
+import { addItem, DesktopItem, renameItem, setItems } from "./desktopSlice";
 import { api } from "@/shared/api/api";
 import { RootState } from "..";
 
@@ -54,6 +54,25 @@ export const loadDesktopThunk = createAsyncThunk(
       return userItems;
     } catch (err: any) {
       return rejectWithValue(err.response?.data || "Server error");
+    }
+  }
+);
+
+export const renameFolderThunk = createAsyncThunk(
+  "desktop/renameFolder",
+  async (
+    { id, newName }: { id: string; newName: string },
+    { dispatch, rejectWithValue }
+  ) => {
+    try {
+      await api.put("/folders/rename", { id, newName });
+
+      // обновляем Redux только после успешного ответа
+      dispatch(renameItem({ id, newName }));
+
+      return { id, newName };
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data || "Rename error");
     }
   }
 );
