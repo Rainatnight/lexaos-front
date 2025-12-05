@@ -1,9 +1,8 @@
 "use client";
 
-import cls from "../DesktopIcons.module.scss";
 import { useTranslation } from "react-i18next";
 import Image from "next/image";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import {
   openFolder,
@@ -14,6 +13,7 @@ import { useState, useEffect, useRef } from "react";
 import { ItemContextMenu } from "@/components/DesktopLayout/ItemContextMenu/ItemContextMenu";
 import { renameFolderThunk } from "@/store/slices/desktopThunks";
 import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
+import cls from "../DesktopIcons.module.scss";
 
 export const DesktopElement = ({
   name,

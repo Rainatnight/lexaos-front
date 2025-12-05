@@ -1,5 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { addItem, DesktopItem, renameItem, setItems } from "./desktopSlice";
+import {
+  addItem,
+  DesktopItem,
+  moveItem,
+  renameItem,
+  setItems,
+} from "./desktopSlice";
 import { api } from "@/shared/api/api";
 import { RootState } from "..";
 
@@ -73,6 +79,30 @@ export const renameFolderThunk = createAsyncThunk(
       return { id, newName };
     } catch (err: any) {
       return rejectWithValue(err.response?.data || "Rename error");
+    }
+  }
+);
+
+export const moveItemThunk = createAsyncThunk(
+  "desktop/moveFolder",
+  async (
+    { id, x, y }: { id: string; x: number; y: number },
+    { dispatch, rejectWithValue }
+  ) => {
+    try {
+      await api.put("/folders/move", { id, newX: x, newY: y });
+
+      dispatch(
+        moveItem({
+          id,
+          x,
+          y,
+        })
+      );
+
+      return { id, x, y };
+    } catch (err: any) {
+      return rejectWithValue(err.response?.data || "Move error");
     }
   }
 );

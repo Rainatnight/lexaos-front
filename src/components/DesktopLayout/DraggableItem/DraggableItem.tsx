@@ -8,6 +8,8 @@ import { DesktopElement } from "@/components/DesktopIcons/DesktopElement/Desktop
 import { RootState } from "@/store";
 import cls from "./DraggableItem.module.scss";
 import { PC, TrashBin, Vs } from "@/components/DesktopIcons";
+import { moveItemThunk } from "@/store/slices/desktopThunks";
+import { useAppDispatch } from "@/shared/hooks/useAppDispatch";
 
 interface IProps {
   item: {
@@ -22,7 +24,7 @@ interface IProps {
 }
 
 export const DraggableItem = React.memo(({ item }: IProps) => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const ref = useRef<HTMLDivElement>(null);
   const currentPos = useRef({ x: item.x, y: item.y });
   const selectedItemId = useSelector(
@@ -66,8 +68,15 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
           dragEndSound.currentTime = 0; // на случай, если звук короткий и срабатывает быстро
           dragEndSound.play().catch((err) => console.log(err));
 
+          // dispatch(
+          //   moveItem({
+          //     id: item.id,
+          //     x: currentPos.current.x,
+          //     y: currentPos.current.y,
+          //   })
+          // );
           dispatch(
-            moveItem({
+            moveItemThunk({
               id: item.id,
               x: currentPos.current.x,
               y: currentPos.current.y,
