@@ -253,7 +253,10 @@ export const FolderModal = ({ item, handleCloseWindow, position }: any) => {
                 y: droppedOutside ? event.clientY - 50 : 10,
               })
             );
-
+            const audio = new Audio("/sounds/snap.mp3");
+            audio.preload = "auto";
+            audio.currentTime = 0;
+            audio.play().catch((err) => console.log(err));
             // показываем оригинал
             el.style.visibility = "visible";
           },

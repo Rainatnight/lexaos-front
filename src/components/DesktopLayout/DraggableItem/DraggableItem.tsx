@@ -68,13 +68,6 @@ export const DraggableItem = React.memo(({ item }: IProps) => {
           dragEndSound.currentTime = 0; // на случай, если звук короткий и срабатывает быстро
           dragEndSound.play().catch((err) => console.log(err));
 
-          // dispatch(
-          //   moveItem({
-          //     id: item.id,
-          //     x: currentPos.current.x,
-          //     y: currentPos.current.y,
-          //   })
-          // );
           dispatch(
             moveItemThunk({
               id: item.id,
